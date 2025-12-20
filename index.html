@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGL465 CAT Interactive Learning Tool</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #FFFFFF;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        
+        .neon-blue { color: #6EC1E4; }
+        .neon-purple { color: #B57EDC; }
+        .neon-green { color: #7FFFD4; }
+        .neon-pink { color: #FFB6C1; }
+        
+        .glow-blue {
+            box-shadow: 0 0 15px rgba(110, 193, 228, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-blue:hover {
+            box-shadow: 0 0 25px rgba(110, 193, 228, 0.6);
+        }
+        
+        .glow-purple {
+            box-shadow: 0 0 15px rgba(181, 126, 220, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-purple:hover {
+            box-shadow: 0 0 25px rgba(181, 126, 220, 0.6);
+        }
+        
+        .glow-green {
+            box-shadow: 0 0 15px rgba(127, 255, 212, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-green:hover {
+            box-shadow: 0 0 25px rgba(127, 255, 212, 0.6);
+        }
+        
+        .glow-pink {
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card {
+            background: rgba(22, 33, 62, 0.8);
+            border: 1px solid rgba(110, 193, 228, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+            min-height: 350px;
+        }
+        
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border-radius: 16px;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, rgba(110, 193, 228, 0.2), rgba(181, 126, 220, 0.2));
+            border: 2px solid #6EC1E4;
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(181, 126, 220, 0.2), rgba(127, 255, 212, 0.2));
+            border: 2px solid #B57EDC;
+            transform: rotateY(180deg);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s;
+            stroke: #6EC1E4;
+            stroke-linecap: round;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 4px;
+        }
+        
+        .badge-bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+            box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+        }
+        
+        .badge-silver {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            box-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+        
+        .badge-gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .celebrate {
+            animation: celebrate 0.5s ease-in-out;
+        }
+        
+        .quiz-option {
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .quiz-option:hover {
+            transform: translateX(8px);
+        }
+        
+        .quiz-option.correct {
+            background: linear-gradient(135deg, rgba(127, 255, 212, 0.3), rgba(127, 255, 212, 0.1));
+            border-color: #7FFFD4;
+        }
+        
+        .quiz-option.incorrect {
+            background: linear-gradient(135deg, rgba(255, 105, 105, 0.3), rgba(255, 105, 105, 0.1));
+            border-color: #ff6969;
+        }
+        
+        .developer-credit {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            border: 2px solid #6EC1E4;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 13px;
+            box-shadow: 0 0 20px rgba(110, 193, 228, 0.5);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <div class="developer-credit">
+        <p class="neon-blue font-semibold">💻 Developed by</p>
+        <p class="neon-green font-bold">Halim Faroug A. Elhag</p>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // Comprehensive course data from ENGL465 materials
+        const courseData = {
+            topics: [
+                { id: 1, name: "Introduction to CAT", color: "#6EC1E4" },
+                { id: 2, name: "Translator's Workstation", color: "#B57EDC" },
+                { id: 3, name: "Translation Memory Systems", color: "#7FFFD4" },
+                { id: 4, name: "Terminology Tools", color: "#FFB6C1" },
+                { id: 5, name: "Localization & Translation", color: "#6EC1E4" },
+                { id: 6, name: "Minority Languages", color: "#B57EDC" },
+                { id: 7, name: "Corpora & Translation", color: "#7FFFD4" },
+                { id: 8, name: "MT Challenges", color: "#FFB6C1" },
+                { id: 9, name: "Linguistics in MT", color: "#6EC1E4" },
+                { id: 10, name: "Commercial MT", color: "#B57EDC" },
+                { id: 11, name: "MT Evaluation", color: "#7FFFD4" },
+                { id: 12, name: "Sublanguage", color: "#FFB6C1" },
+                { id: 13, name: "Post-Editing", color: "#6EC1E4" },
+                { id: 14, name: "MT in Classroom", color: "#B57EDC" }
+            ],
+            flashcards: [
+                // Topic 1: Introduction to CAT
+                {
+                    id: 1,
+                    topic: 1,
+                    front: "What is Computer-Assisted Translation (CAT)?",
+                    back: "The use of computer programs and tools to help human translators create accurate, efficient, and consistent translations. The translator remains in control while being supported by features like Translation Memory, terminology tools, and quality checks.",
+                    mastery: "new"
+                },
+                {
+                    id: 2,
+                    topic: 1,
+                    front: "What was the ALPAC Report and its impact?",
+                    back: "A 1966 report by the Automated Language Processing Advisory Committee that assessed MT systems and found them slower, less accurate, and more expensive than human translators. This led to a decline in MT funding and a shift toward CAT tools.",
+                    mastery: "new"
+                },
+                {
+                    id: 3,
+                    topic: 1,
+                    front: "What is the difference between MT and CAT?",
+                    back: "Machine Translation (MT) tries to automate the entire translation process, while Computer-Assisted Translation (CAT) focuses on making the translator's work faster and more consistent by providing tools like TM and terminology databases.",
+                    mastery: "new"
+                },
+                {
+                    id: 4,
+                    topic: 1,
+                    front: "When did CAT tools like Trados emerge?",
+                    back: "By the 1980s, tools like Trados and Déjà Vu revolutionized the industry with features such as Translation Memory (TM) and terminology management, making translation faster and more cost-effective.",
+                    mastery: "new"
+                },
+                
+                // Topic 2: Translator's Workstation
+                {
+                    id: 5,
+                    topic: 2,
+                    front: "What is a translator's workstation?",
+                    back: "A dynamic ecosystem of tools designed to enhance productivity, accuracy, and consistency in translation workflows. It integrates human expertise with technologies like TM, terminology databases, and advanced editing tools.",
+                    mastery: "new"
+                },
+                {
+                    id: 6,
+                    topic: 2,
+                    front: "What are the two categories of Computer-Aided Translation?",
+                    back: "MAHT (Machine-Aided Human Translation): Human-driven translations supported by computer tools, and HAMT (Human-Aided Machine Translation): Computer-driven translations where humans provide oversight.",
+                    mastery: "new"
+                },
+                {
+                    id: 7,
+                    topic: 2,
+                    front: "What are mark-up languages used for in translation?",
+                    back: "Languages like SGML and HTML use tags to define text structure and formatting, allowing global formatting changes, annotating technical terms, indicating grammatical details, and embedding instructions for collaborators.",
+                    mastery: "new"
+                },
+                {
+                    id: 8,
+                    topic: 2,
+                    front: "What are the benefits of dictation tools for translators?",
+                    back: "Speed (speaking is faster than typing), improved style (verbalizing reduces awkward phrasing), fewer typos, and health benefits by reducing strain from repetitive keyboard motions.",
+                    mastery: "new"
+                },
+                
+                // Topic 3: Translation Memory Systems
+                {
+                    id: 9,
+                    topic: 3,
+                    front: "What is Translation Memory (TM)?",
+                    back: "A computer-based tool that stores previous translations in a database, allowing translators to access and reuse past translations. It typically works on a sentence-by-sentence basis and can provide exact or fuzzy matches.",
+                    mastery: "new"
+                },
+                {
+                    id: 10,
+                    topic: 3,
+                    front: "What is TMX format?",
+                    back: "Translation Memory eXchange format - a standard that allows TM databases developed in different systems to be exchanged, ensuring compatibility between different CAT tools.",
+                    mastery: "new"
+                },
+                {
+                    id: 11,
+                    topic: 3,
+                    front: "What is a fuzzy match in Translation Memory?",
+                    back: "A similar but not identical match to stored segments. TM systems assign a similarity percentage using Levenshtein distance. For example, a 95% match indicates minor differences, while a 75% match shows more significant variations.",
+                    mastery: "new"
+                },
+                {
+                    id: 12,
+                    topic: 3,
+                    front: "What is a context match?",
+                    back: "When the new source segment matches a stored segment exactly, and its surrounding context (preceding and following segments) also matches. This ensures the translation is appropriate for the specific context.",
+                    mastery: "new"
+                },
+                {
+                    id: 13,
+                    topic: 3,
+                    front: "What are the three ways to build a TM database?",
+                    back: "1) Building it as you go by adding each translated sentence, 2) Importing someone else's database using TMX format, 3) Aligning a parallel text by matching source text with its translation segment-by-segment.",
+                    mastery: "new"
+                },
+                
+                // Topic 4: Terminology Tools
+                {
+                    id: 14,
+                    topic: 4,
+                    front: "What is terminology management?",
+                    back: "The process of collecting, organizing, and using specialized terms in different fields. It involves creating and maintaining glossaries of technical terms to ensure consistency and accuracy in translation.",
+                    mastery: "new"
+                },
+                {
+                    id: 15,
+                    topic: 4,
+                    front: "What is the difference between term banks and termbases?",
+                    back: "Term banks are like encyclopedias with comprehensive details (definitions, synonyms, grammar, usage notes) for broad audiences. Termbases are like sticky notes - quick and to the point, including only essential details for translators.",
+                    mastery: "new"
+                },
+                {
+                    id: 16,
+                    topic: 4,
+                    front: "What are the two main methods of term extraction?",
+                    back: "1) Linguistic Approach: finds terms based on grammar patterns using software to tag words. 2) Statistical Approach: finds terms by looking for words that appear together often, using frequency analysis.",
+                    mastery: "new"
+                },
+                {
+                    id: 17,
+                    topic: 4,
+                    front: "What were the early term banks?",
+                    back: "Large organizations developed the first digital terminology databases in the 1960s-1980s, such as Termium and Eurodicautom, to assist translators with definitions, translations, and examples.",
+                    mastery: "new"
+                },
+                
+                // Topic 5: Localization & Translation
+                {
+                    id: 18,
+                    topic: 5,
+                    front: "What does L10n stand for?",
+                    back: "Localization - the process of making a product linguistically, technically, and culturally appropriate for its target market. The abbreviation uses '10' for the 10 letters between L and n.",
+                    mastery: "new"
+                },
+                {
+                    id: 19,
+                    topic: 5,
+                    front: "What does i18n stand for?",
+                    back: "Internationalization - designing products to support multiple languages from the start. The abbreviation uses '18' for the 18 letters between I and n. Example: Using Unicode to handle Japanese characters.",
+                    mastery: "new"
+                },
+                {
+                    id: 20,
+                    topic: 5,
+                    front: "What does g11n stand for?",
+                    back: "Globalization - encompasses the entire process of bringing a product to international markets, from internationalization and localization to marketing, sales, and support. Uses '11' for the 11 letters between G and n.",
+                    mastery: "new"
+                },
+                {
+                    id: 21,
+                    topic: 5,
+                    front: "What are the key differences between translation and localization?",
+                    back: "Translation: text conversion, single documents, language only, basic CAT tools. Localization: software testing, large-scale projects, language + culture + technical aspects (currencies, hotkeys), TM systems and specialized tools.",
+                    mastery: "new"
+                },
+                {
+                    id: 22,
+                    topic: 5,
+                    front: "What are the main components of a localization project?",
+                    back: "1) Software (menus, dialogs, messages), 2) Online help (HTML-based with TOC and search), 3) Documentation (PDFs, manuals), 4) Web content (websites with cultural adaptation and e-commerce features).",
+                    mastery: "new"
+                },
+                
+                // Topic 6: Minority Languages
+                {
+                    id: 23,
+                    topic: 6,
+                    front: "What defines a minority language?",
+                    back: "A language spoken by fewer than 50% of the population within a specific geopolitical area (region, state, or country), and typically lacking formal recognition or institutional support in government, education, or media.",
+                    mastery: "new"
+                },
+                {
+                    id: 24,
+                    topic: 6,
+                    front: "What are the three tiers of languages based on computational resources?",
+                    back: "1) High-resource languages (e.g., English, Mandarin) with advanced MT/CAT tools, 2) Mid-resource languages (e.g., Swahili, Tamil) with limited tools, 3) Low-resource languages (Indigenous/regional dialects) lacking basic digital tools.",
+                    mastery: "new"
+                },
+                {
+                    id: 25,
+                    topic: 6,
+                    front: "What are the key categories of computational resources for languages?",
+                    back: "Keyboards, word-processing tools, OCR (Optical Character Recognition), spell-checking and grammar-checking, dictionaries (monolingual, bilingual, multilingual), and CAT/MT systems.",
+                    mastery: "new"
+                },
+                {
+                    id: 26,
+                    topic: 6,
+                    front: "What methods can develop language engineering resources?",
+                    back: "1) Extracting monolingual word-lists from text corpora, 2) Building dictionaries and thesauri, 3) Using bilingual corpora for vocabulary extraction, 4) Developing linguistic descriptions and grammar rules.",
+                    mastery: "new"
+                },
+                
+                // Topic 7: Corpora & Translation
+                {
+                    id: 27,
+                    topic: 7,
+                    front: "What is a corpus?",
+                    back: "A collection of texts stored on a computer, often analyzed automatically or semi-automatically. It can be a collection of language samples selected and organized by explicit linguistic criteria.",
+                    mastery: "new"
+                },
+                {
+                    id: 28,
+                    topic: 7,
+                    front: "What is a parallel corpus?",
+                    back: "A collection of texts in one language with their translations in another language. It can be mono-directional (A→B) or bi-directional (A↔B) and is used for translation research and training MT systems.",
+                    mastery: "new"
+                },
+                {
+                    id: 29,
+                    topic: 7,
+                    front: "What is a comparable corpus?",
+                    back: "A bilingual corpus containing two collections of original texts in Language A and Language B, similar in genre, topic, time span, and communicative function, but not direct translations of each other.",
+                    mastery: "new"
+                },
+                {
+                    id: 30,
+                    topic: 7,
+                    front: "What is a concordance (KWIC)?",
+                    back: "Keyword in Context list - displays occurrences of a word along with its context. A bilingual concordance links occurrences of words, phrases, or technical terms with their translations, showing how they were previously rendered.",
+                    mastery: "new"
+                },
+                {
+                    id: 31,
+                    topic: 7,
+                    front: "What is the Translational English Corpus (TEC)?",
+                    back: "A web-based tool created in 1994 at UMIST for studying translated English. It contains published translations by professionals and allows automatic text analysis through concordances and frequency lists.",
+                    mastery: "new"
+                },
+                
+                // Topic 8: MT Challenges
+                {
+                    id: 32,
+                    topic: 8,
+                    front: "What is the Analysis Problem in MT?",
+                    back: "Computers need to analyze the meaning of source text, but many words have different meanings based on context. For example, 'pen' could mean a writing tool or an animal enclosure.",
+                    mastery: "new"
+                },
+                {
+                    id: 33,
+                    topic: 8,
+                    front: "What is the Transfer Problem in MT?",
+                    back: "Even if the computer understands meaning, it's difficult to express that meaning in the target language because different languages structure sentences differently. Example: 'He ran into the room' becomes 'Il est entré dans la pièce' in French.",
+                    mastery: "new"
+                },
+                {
+                    id: 34,
+                    topic: 8,
+                    front: "What is the Synthesis Problem in MT?",
+                    back: "After transferring meaning, the computer needs to choose the best way to express it. There are often many ways to express the same meaning, requiring selection of the most natural phrasing in the target language.",
+                    mastery: "new"
+                },
+                {
+                    id: 35,
+                    topic: 8,
+                    front: "What are the four main limitations computers face in translation?",
+                    back: "1) Inability to perform vaguely defined tasks, 2) Inability to learn from experience, 3) Inability to perform common-sense reasoning, 4) Difficulty dealing with combinatorial explosive problems.",
+                    mastery: "new"
+                },
+                {
+                    id: 36,
+                    topic: 8,
+                    front: "What is Example-Based Machine Translation (EBMT)?",
+                    back: "An MT approach that uses a database of examples to find matching translations from past sentences. It requires millions of examples but can struggle when multiple translations are possible.",
+                    mastery: "new"
+                },
+                
+                // Topic 9: Linguistics in MT
+                {
+                    id: 37,
+                    topic: 9,
+                    front: "What is the role of linguistics in Machine Translation?",
+                    back: "Linguistics provides descriptions of languages, theories about how language works, and ways to express these theories clearly. It helps MT systems with structured methods for analyzing and processing language.",
+                    mastery: "new"
+                },
+                {
+                    id: 38,
+                    topic: 9,
+                    front: "What is the difference between formal and functional linguistics in MT?",
+                    back: "Formal linguistics focuses on clear rules for grammar and meaning (syntax, structure), which computers need. Functional linguistics focuses on how people use words and context, helping with challenges like idioms and sarcasm.",
+                    mastery: "new"
+                },
+                {
+                    id: 39,
+                    topic: 9,
+                    front: "What are representations in MT?",
+                    back: "Universal bridges between languages that remove differences in word order, syntax, and grammar, focusing only on core meaning. They help translations adapt across languages by concentrating on meaning rather than grammar.",
+                    mastery: "new"
+                },
+                {
+                    id: 40,
+                    topic: 9,
+                    front: "What are descriptive components in MT?",
+                    back: "The tools that determine how to translate: Grammars (rules for sentence structure), Lexicons (word databases with part of speech and forms), and Transfer Rules (language-specific mappings).",
+                    mastery: "new"
+                },
+                {
+                    id: 41,
+                    topic: 9,
+                    front: "What are translation divergences?",
+                    back: "Differences or mismatches in surface structure between languages. Languages express meaning in different ways using distinct grammatical structures or word formations, posing challenges for MT systems.",
+                    mastery: "new"
+                },
+                
+                // Topic 10: Commercial MT
+                {
+                    id: 42,
+                    topic: 10,
+                    front: "What are the two main approaches to building MT systems?",
+                    back: "1) Rule-Based MT (RBMT): Linguists manually create grammar rules and dictionaries. 2) Data-Driven MT (Statistical & Example-Based): Systems analyze large datasets to detect translation patterns and learn from previous translations.",
+                    mastery: "new"
+                },
+                {
+                    id: 43,
+                    topic: 10,
+                    front: "What are the three main purposes for MT evaluation?",
+                    back: "1) Gisting (quick understanding for browsing), prioritizing speed, 2) Dissemination (publication-quality for official documents), prioritizing accuracy, 3) Communication (real-time for emails/chats), balancing speed and accuracy.",
+                    mastery: "new"
+                },
+                {
+                    id: 44,
+                    topic: 10,
+                    front: "What are the two major performance challenges in MT?",
+                    back: "1) Linguistic Complexity: Words with multiple meanings and varying sentence structures, 2) Data Limitations: Need for large amounts of bilingual data, which isn't available for all languages.",
+                    mastery: "new"
+                },
+                {
+                    id: 45,
+                    topic: 10,
+                    front: "How do users improve MT accuracy?",
+                    back: "By customizing MT dictionaries for industry-specific terms, post-editing MT output to refine translations, and integrating MT with terminology management tools for consistency.",
+                    mastery: "new"
+                },
+                
+                // Topic 11: MT Evaluation
+                {
+                    id: 46,
+                    topic: 11,
+                    front: "What does BLEU measure?",
+                    back: "Bilingual Evaluation Understudy - an automatic evaluation method that compares MT output with human translations and assigns a score based on similarity. Higher scores indicate closer matches to human translation.",
+                    mastery: "new"
+                },
+                {
+                    id: 47,
+                    topic: 11,
+                    front: "What are Adequacy and Fluency in MT evaluation?",
+                    back: "Adequacy measures how much of the original content is preserved in the translation. Fluency measures how natural the translation sounds - whether it's grammatically correct and easy to read.",
+                    mastery: "new"
+                },
+                {
+                    id: 48,
+                    topic: 11,
+                    front: "What are the main types of MT evaluation approaches?",
+                    back: "Declarative evaluation (judges quality), Black-box evaluation (assesses input/output without examining internals), Glass-box evaluation (examines internal workings like grammar handling), and various feasibility tests.",
+                    mastery: "new"
+                },
+                {
+                    id: 49,
+                    topic: 11,
+                    front: "What are the main challenges in MT evaluation?",
+                    back: "1) Subjectivity in evaluation, 2) Multiple correct translations possible, 3) Balancing accuracy and readability - literal translations may be accurate but unnatural, while fluent ones might lose details.",
+                    mastery: "new"
+                },
+                {
+                    id: 50,
+                    topic: 11,
+                    front: "What is the Informativeness evaluation method?",
+                    back: "Evaluates whether the translated text conveys important information accurately. Readers answer comprehension questions about the content. If they can correctly understand and extract information, the MT system is effective.",
+                    mastery: "new"
+                },
+                
+                // Topic 12: Sublanguage
+                {
+                    id: 51,
+                    topic: 12,
+                    front: "What is a sublanguage?",
+                    back: "A smaller, specialized version of a full language used in particular fields (medical, legal, weather reporting). It has limited vocabulary, preferred sentence structures, and specific formatting that makes MT more effective.",
+                    mastery: "new"
+                },
+                {
+                    id: 52,
+                    topic: 12,
+                    front: "What is the Météo system?",
+                    back: "A successful MT system that translates weather bulletins from English to French with less than 5% requiring human editing. It works well due to standard format, limited vocabulary (1,000 words), and simple grammar patterns.",
+                    mastery: "new"
+                },
+                {
+                    id: 53,
+                    topic: 12,
+                    front: "What are the three main features of sublanguages?",
+                    back: "1) Vocabulary: specialized words with special meanings in context, 2) Grammar: certain sentence types used more often, some words removed, 3) Text Format: each type follows a fixed structure.",
+                    mastery: "new"
+                },
+                {
+                    id: 54,
+                    topic: 12,
+                    front: "Which sublanguages are easy vs. difficult to translate?",
+                    back: "Easy: Weather reports (small vocabulary, short sentences), stock market reports (common patterns), medical reports (clear structure). Difficult: Legal language (very long sentences), aircraft maintenance manuals (complex descriptions).",
+                    mastery: "new"
+                },
+                
+                // Topic 13: Post-Editing
+                {
+                    id: 55,
+                    topic: 13,
+                    front: "What is Post-Editing?",
+                    back: "The process of improving machine-translated text by making necessary corrections to ensure accuracy, fluency, and readability. Instead of translating from scratch, a post-editor refines a draft translation produced by a machine.",
+                    mastery: "new"
+                },
+                {
+                    id: 56,
+                    topic: 13,
+                    front: "What are the two levels of post-editing?",
+                    back: "1) Minimal Post-Editing (MPE): Makes text understandable with minimal changes, fixes major errors, used for internal documents. 2) Full Post-Editing (FPE): Aims for high-quality translation, corrects all aspects, suitable for published content.",
+                    mastery: "new"
+                },
+                {
+                    id: 57,
+                    topic: 13,
+                    front: "What are the seven SAE J2450 error types?",
+                    back: "1) Wrong Term (WT), 2) Syntactic Error (SE), 3) Omission (OM), 4) Word Structure/Agreement Error (SA), 5) Misspelling (SP), 6) Punctuation Error (PE), 7) Miscellaneous Error (ME).",
+                    mastery: "new"
+                },
+                {
+                    id: 58,
+                    topic: 13,
+                    front: "What are the best practices for post-editing?",
+                    back: "1) Pre-editing (simplify source text before MT), 2) Using TM and glossaries for consistency, 3) Training post-editors with linguistic expertise and MT experience, 4) Error classification for objective quality evaluation.",
+                    mastery: "new"
+                },
+                {
+                    id: 59,
+                    topic: 13,
+                    front: "What are the main challenges in post-editing?",
+                    back: "Mental effort and fatigue, inconsistent machine output, balancing quality and speed, lack of clear guidelines, and terminology/style inconsistency requiring constant manual corrections.",
+                    mastery: "new"
+                },
+                
+                // Topic 14: MT in Classroom
+                {
+                    id: 60,
+                    topic: 14,
+                    front: "How is MT used in translation student training?",
+                    back: "Students learn MT's strengths and weaknesses, use different MT tools to compare outputs, and practice post-editing by fixing grammar, word choices, and style to create clear translations.",
+                    mastery: "new"
+                },
+                {
+                    id: 61,
+                    topic: 14,
+                    front: "How is MT useful for language learning?",
+                    back: "By comparing languages (analyzing how translations differ in structure), identifying and correcting mistakes (strengthening understanding), and expanding vocabulary (introducing new words, though verification is needed).",
+                    mastery: "new"
+                },
+                {
+                    id: 62,
+                    topic: 14,
+                    front: "What is TransIt-Tiger?",
+                    back: "A useful tool for language learners that provides translations, hints, and alternative suggestions to help students understand how sentences are constructed.",
+                    mastery: "new"
+                },
+                {
+                    id: 63,
+                    topic: 14,
+                    front: "How should MT be taught to professionals?",
+                    back: "Focus on understanding MT's role in communication, writing MT-friendly texts (simplifying sentences, avoiding complex expressions), and post-editing for clarity and accuracy in business documents.",
+                    mastery: "new"
+                },
+                {
+                    id: 64,
+                    topic: 14,
+                    front: "What classroom activities evaluate MT effectively?",
+                    back: "Comparing MT translations with human translations, editing MT output for better readability, testing different MT systems, and analyzing where MT works well versus where it makes mistakes.",
+                    mastery: "new"
+                }
+            ],
+            quizzes: [
+                // Topic 1: Introduction to CAT
+                {
+                    id: 1,
+                    topic: 1,
+                    question: "What was the main finding of the 1966 ALPAC Report?",
+                    options: [
+                        "MT systems were faster and cheaper than human translators",
+                        "MT systems were slower, less accurate, and twice as expensive as human translators",
+                        "MT systems were ready for commercial deployment",
+                        "MT systems should replace all human translators"
+                    ],
+                    correct: 1,
+                    explanation: "The ALPAC report found that MT systems were slower, less accurate, and twice as expensive as using human translators, leading to a sharp decline in MT funding and a shift toward CAT tools."
+                },
+                {
+                    id: 2,
+                    topic: 1,
+                    question: "Which feature is NOT a key component of CAT tools?",
+                    options: [
+                        "Translation Memory (TM)",
+                        "Terminology Management",
+                        "Complete automation of translation",
+                        "Quality Assurance checks"
+                    ],
+                    correct: 2,
+                    explanation: "CAT tools focus on assisting translators, not completely automating translation. The translator remains in control while being supported by features like TM, terminology tools, and QA checks."
+                },
+                
+                // Topic 2: Translator's Workstation
+                {
+                    id: 3,
+                    topic: 2,
+                    question: "Who proposed the influential concept of the translator's workstation in 1980?",
+                    options: [
+                        "Peter Arthern",
+                        "Martin Kay",
+                        "Alan Melby",
+                        "Warren Weaver"
+                    ],
+                    correct: 1,
+                    explanation: "Martin Kay's 1980 memo 'The Proper Place of Men and Machines in Language Translation' is credited with the original concept of the translator's workstation or 'workbench'."
+                },
+                {
+                    id: 4,
+                    topic: 2,
+                    question: "What does MAHT stand for in Computer-Aided Translation?",
+                    options: [
+                        "Machine-Aided Human Technology",
+                        "Machine-Aided Human Translation",
+                        "Manual-Aided Human Translation",
+                        "Multiple-Aided Human Translation"
+                    ],
+                    correct: 1,
+                    explanation: "MAHT stands for Machine-Aided Human Translation, where human-driven translations are supported by computer tools, with the translator maintaining primary control."
+                },
+                
+                // Topic 3: Translation Memory Systems
+                {
+                    id: 5,
+                    topic: 3,
+                    question: "What is a fuzzy match in Translation Memory?",
+                    options: [
+                        "An exact duplicate of a stored segment",
+                        "A similar but not identical match to stored segments",
+                        "A match with identical surrounding context",
+                        "A match of individual words only"
+                    ],
+                    correct: 1,
+                    explanation: "Fuzzy matches are similar but not identical to stored segments, often calculated using Levenshtein distance with similarity percentages like 95% or 75%."
+                },
+                {
+                    id: 6,
+                    topic: 3,
+                    question: "When did Translation Memory systems become commercially available?",
+                    options: [
+                        "1970s",
+                        "1980s",
+                        "Mid-1990s",
+                        "2000s"
+                    ],
+                    correct: 2,
+                    explanation: "Though the idea of TM was first proposed in the 1970s, TM systems didn't become commercially available until the mid-1990s, after which they were quickly adopted."
+                },
+                
+                // Topic 4: Terminology Tools
+                {
+                    id: 7,
+                    topic: 4,
+                    question: "What is the main difference between linguistic and statistical approaches to term extraction?",
+                    options: [
+                        "Linguistic uses frequency, statistical uses grammar patterns",
+                        "Linguistic uses grammar patterns, statistical uses frequency analysis",
+                        "Both use the same methods",
+                        "Linguistic is automatic, statistical requires human input"
+                    ],
+                    correct: 1,
+                    explanation: "The linguistic approach finds terms based on grammar patterns (e.g., adjective + noun), while the statistical approach finds terms by analyzing word frequency and co-occurrence patterns."
+                },
+                {
+                    id: 8,
+                    topic: 4,
+                    question: "Which early term bank was developed to assist translators?",
+                    options: [
+                        "Google Translate",
+                        "Eurodicautom",
+                        "DeepL",
+                        "Microsoft Translator"
+                    ],
+                    correct: 1,
+                    explanation: "Eurodicautom was one of the first digital terminology databases developed in the 1960s-1980s, along with Termium, to assist translators with definitions, translations, and examples."
+                },
+                
+                // Topic 5: Localization & Translation
+                {
+                    id: 9,
+                    topic: 5,
+                    question: "What does i18n stand for?",
+                    options: [
+                        "Integration",
+                        "Internationalization",
+                        "Implementation",
+                        "Intelligence"
+                    ],
+                    correct: 1,
+                    explanation: "Internationalization (i18n) means designing products to support multiple languages from the start, using '18' for the 18 letters between I and n."
+                },
+                {
+                    id: 10,
+                    topic: 5,
+                    question: "Which is NOT a key difference between translation and localization?",
+                    options: [
+                        "Localization includes software testing",
+                        "Translation only handles language, localization includes cultural and technical aspects",
+                        "Localization uses more advanced technology",
+                        "Translation is always more expensive than localization"
+                    ],
+                    correct: 3,
+                    explanation: "Cost varies by project. The key differences are that localization includes software testing, handles language + culture + technical aspects (currencies, formats), and uses specialized tools beyond basic CAT."
+                },
+                
+                // Topic 6: Minority Languages
+                {
+                    id: 11,
+                    topic: 6,
+                    question: "What defines a minority language?",
+                    options: [
+                        "Any language spoken by fewer than 1 million people",
+                        "A language spoken by fewer than 50% of the population in an area and lacking official status",
+                        "Any language without a writing system",
+                        "Languages only spoken in developing countries"
+                    ],
+                    correct: 1,
+                    explanation: "A minority language is spoken by fewer than 50% of the population within a specific geopolitical area and typically lacks formal recognition or institutional support."
+                },
+                {
+                    id: 12,
+                    topic: 6,
+                    question: "What are the three tiers of languages based on computational resources?",
+                    options: [
+                        "Large, medium, small languages",
+                        "High-resource, mid-resource, low-resource languages",
+                        "Official, regional, local languages",
+                        "Written, spoken, signed languages"
+                    ],
+                    correct: 1,
+                    explanation: "Languages are stratified into high-resource (e.g., English, Mandarin with advanced tools), mid-resource (e.g., Swahili, Tamil with limited tools), and low-resource (Indigenous dialects lacking basic tools)."
+                },
+                
+                // Topic 7: Corpora & Translation
+                {
+                    id: 13,
+                    topic: 7,
+                    question: "What is a concordance (KWIC)?",
+                    options: [
+                        "A type of translation memory",
+                        "A list showing word occurrences with their context",
+                        "A machine translation system",
+                        "A terminology database"
+                    ],
+                    correct: 1,
+                    explanation: "A concordance (Keyword in Context) displays occurrences of a word along with its context. A bilingual concordance links words with their translations, showing how they were previously rendered."
+                },
+                {
+                    id: 14,
+                    topic: 7,
+                    question: "What type of corpus contains texts and their direct translations?",
+                    options: [
+                        "Comparable corpus",
+                        "Monolingual corpus",
+                        "Parallel corpus",
+                        "Reference corpus"
+                    ],
+                    correct: 2,
+                    explanation: "A parallel corpus contains texts in one language with their translations in another language. It can be mono-directional (A→B) or bi-directional (A↔B)."
+                },
+                
+                // Topic 8: MT Challenges
+                {
+                    id: 15,
+                    topic: 8,
+                    question: "Which is NOT one of the four main limitations computers face in translation?",
+                    options: [
+                        "Inability to perform vaguely defined tasks",
+                        "Inability to learn from experience",
+                        "Inability to process large amounts of data",
+                        "Inability to perform common-sense reasoning"
+                    ],
+                    correct: 2,
+                    explanation: "The four main limitations are: inability to perform vaguely defined tasks, inability to learn from experience, inability to perform common-sense reasoning, and difficulty with combinatorial explosive problems. Computers can process large data."
+                },
+                {
+                    id: 16,
+                    topic: 8,
+                    question: "What MT approach uses a database of examples to find matching translations?",
+                    options: [
+                        "Rule-Based MT",
+                        "Neural MT",
+                        "Example-Based MT (EBMT)",
+                        "Hybrid MT"
+                    ],
+                    correct: 2,
+                    explanation: "Example-Based Machine Translation (EBMT) uses a database of examples to find matching translations from past sentences, though it requires millions of examples and can struggle with multiple possible translations."
+                },
+                
+                // Topic 9: Linguistics in MT
+                {
+                    id: 17,
+                    topic: 9,
+                    question: "What are 'representations' in Machine Translation?",
+                    options: [
+                        "The user interface of MT systems",
+                        "Universal bridges between languages focusing on core meaning",
+                        "The quality score of translations",
+                        "The marketing materials for MT products"
+                    ],
+                    correct: 1,
+                    explanation: "Representations serve as universal bridges between languages that remove differences in word order, syntax, and grammar, focusing only on core meaning to help translations adapt across languages."
+                },
+                {
+                    id: 18,
+                    topic: 9,
+                    question: "What do descriptive components include in MT?",
+                    options: [
+                        "Only dictionaries",
+                        "Only grammar rules",
+                        "Grammars, Lexicons, and Transfer Rules",
+                        "Only translation examples"
+                    ],
+                    correct: 2,
+                    explanation: "Descriptive components determine how to translate and include: Grammars (sentence structure rules), Lexicons (word databases with properties), and Transfer Rules (language-specific mappings)."
+                },
+                
+                // Topic 10: Commercial MT
+                {
+                    id: 19,
+                    topic: 10,
+                    question: "What are the two main approaches to building MT systems?",
+                    options: [
+                        "Fast and slow methods",
+                        "Rule-Based MT and Data-Driven MT",
+                        "Free and paid systems",
+                        "Online and offline systems"
+                    ],
+                    correct: 1,
+                    explanation: "Rule-Based MT (RBMT) involves linguists manually creating grammar rules and dictionaries. Data-Driven MT analyzes large datasets to detect translation patterns and learn from previous translations."
+                },
+                {
+                    id: 20,
+                    topic: 10,
+                    question: "Which MT purpose prioritizes speed over accuracy?",
+                    options: [
+                        "Dissemination",
+                        "Gisting",
+                        "Communication",
+                        "Publication"
+                    ],
+                    correct: 1,
+                    explanation: "Gisting is used for quick understanding and information gathering (like browsing foreign websites) where speed is prioritized over perfect accuracy."
+                },
+                
+                // Topic 11: MT Evaluation
+                {
+                    id: 21,
+                    topic: 11,
+                    question: "What does BLEU measure?",
+                    options: [
+                        "The speed of translation",
+                        "Similarity between MT output and human translations",
+                        "The cost of translation",
+                        "The number of languages supported"
+                    ],
+                    correct: 1,
+                    explanation: "BLEU (Bilingual Evaluation Understudy) compares MT output with human translations and assigns a score based on how similar they are. Higher scores indicate closer matches to human translation."
+                },
+                {
+                    id: 22,
+                    topic: 11,
+                    question: "What is the main limitation of the BLEU evaluation method?",
+                    options: [
+                        "It takes too long to compute",
+                        "It's too expensive",
+                        "It doesn't evaluate meaning or fluency well",
+                        "It only works for English"
+                    ],
+                    correct: 2,
+                    explanation: "Although BLEU is useful for quick assessments, it has limitations. It does not evaluate meaning or fluency well and may give high scores to structurally correct but semantically incorrect translations."
+                },
+                
+                // Topic 12: Sublanguage
+                {
+                    id: 23,
+                    topic: 12,
+                    question: "Which MT system translates weather reports with over 95% accuracy?",
+                    options: [
+                        "SYSTRAN",
+                        "Météo",
+                        "Google Translate",
+                        "DeepL"
+                    ],
+                    correct: 1,
+                    explanation: "The Météo system translates weather bulletins from English to French with less than 5% requiring human editing, thanks to standardized format, limited vocabulary (1,000 words), and simple grammar."
+                },
+                {
+                    id: 24,
+                    topic: 12,
+                    question: "Why is sublanguage easier for MT than general language?",
+                    options: [
+                        "It uses more complex grammar",
+                        "It has unlimited vocabulary",
+                        "It has limited vocabulary, clear patterns, and fixed structure",
+                        "It changes constantly"
+                    ],
+                    correct: 2,
+                    explanation: "Sublanguages have limited vocabulary, preferred sentence structures, and specific formatting that follow predictable patterns, making it easier for computers to translate correctly."
+                },
+                
+                // Topic 13: Post-Editing
+                {
+                    id: 25,
+                    topic: 13,
+                    question: "What error type is 'The translater has wroten'?",
+                    options: [
+                        "Syntactic Error",
+                        "Misspelling",
+                        "Wrong Term",
+                        "Omission"
+                    ],
+                    correct: 1,
+                    explanation: "This contains misspellings (SP): 'translater' should be 'translator' and 'wroten' should be 'written' according to SAE J2450 error classification."
+                },
+                {
+                    id: 26,
+                    topic: 13,
+                    question: "What is the difference between MPE and FPE?",
+                    options: [
+                        "MPE is more expensive than FPE",
+                        "MPE makes text understandable with minimal changes; FPE aims for high-quality translation",
+                        "MPE is only for technical documents; FPE is for creative content",
+                        "There is no difference"
+                    ],
+                    correct: 1,
+                    explanation: "Minimal Post-Editing (MPE) focuses on making text understandable with minimal changes, used for internal documents. Full Post-Editing (FPE) aims for high-quality, natural translation suitable for publication."
+                },
+                
+                // Topic 14: MT in Classroom
+                {
+                    id: 27,
+                    topic: 14,
+                    question: "What is TransIt-Tiger?",
+                    options: [
+                        "A machine translation system",
+                        "A tool that provides translations, hints, and suggestions for language learners",
+                        "A post-editing software",
+                        "A terminology database"
+                    ],
+                    correct: 1,
+                    explanation: "TransIt-Tiger is a useful tool for language learners that provides translations, hints, and alternative suggestions to help students understand how sentences are constructed."
+                },
+                {
+                    id: 28,
+                    topic: 14,
+                    question: "How should MT be used in language learning according to the course?",
+                    options: [
+                        "As a complete replacement for traditional study methods",
+                        "Only for translating homework",
+                        "As a learning aid to compare languages and identify mistakes",
+                        "Never - it should be avoided entirely"
+                    ],
+                    correct: 2,
+                    explanation: "MT should be used as a learning aid to compare languages, identify and correct mistakes, and expand vocabulary. However, it should not replace traditional study methods, and students need to be aware of its limitations."
+                }
+            ]
+        };
+
+        // Main App Component
+        function App() {
+            const [currentView, setCurrentView] = useState('dashboard');
+            const [selectedTopic, setSelectedTopic] = useState(null);
+            const [userProgress, setUserProgress] = useState({
+                completedTopics: [],
+                totalXP: 0,
+                level: 1,
+                streak: 0,
+                badges: [],
+                quizScores: {},
+                flashcardProgress: {}
+            });
+
+            useEffect(() => {
+                const initialProgress = {};
+                courseData.flashcards.forEach(card => {
+                    initialProgress[card.id] = {
+                        mastery: 'new',
+                        nextReview: new Date(),
+                        reviewCount: 0
+                    };
+                });
+                setUserProgress(prev => ({
+                    ...prev,
+                    flashcardProgress: initialProgress
+                }));
+            }, []);
+
+            const addXP = (amount) => {
+                setUserProgress(prev => {
+                    const newXP = prev.totalXP + amount;
+                    const newLevel = Math.floor(newXP / 250) + 1;
+                    return { ...prev, totalXP: newXP, level: newLevel };
+                });
+            };
+
+            return (
+                <div className="min-h-screen">
+                    <Navigation currentView={currentView} setCurrentView={setCurrentView} userProgress={userProgress} />
+                    <main className="container mx-auto px-4 py-8 max-w-7xl">
+                        {currentView === 'dashboard' && (
+                            <Dashboard 
+                                userProgress={userProgress} 
+                                courseData={courseData}
+                                setCurrentView={setCurrentView}
+                                setSelectedTopic={setSelectedTopic}
+                            />
+                        )}
+                        {currentView === 'flashcards' && (
+                            <FlashcardView 
+                                courseData={courseData}
+                                selectedTopic={selectedTopic}
+                                userProgress={userProgress}
+                                setUserProgress={setUserProgress}
+                                addXP={addXP}
+                            />
+                        )}
+                        {currentView === 'quiz' && (
+                            <QuizView 
+                                courseData={courseData}
+                                selectedTopic={selectedTopic}
+                                addXP={addXP}
+                                userProgress={userProgress}
+                                setUserProgress={setUserProgress}
+                            />
+                        )}
+                        {currentView === 'progress' && (
+                            <ProgressView userProgress={userProgress} courseData={courseData} />
+                        )}
+                    </main>
+                </div>
+            );
+        }
+
+        // Navigation Component
+        function Navigation({ currentView, setCurrentView, userProgress }) {
+            return (
+                <nav className="bg-[#16213e] border-b border-[#6EC1E4] sticky top-0 z-50 glow-blue">
+                    <div className="container mx-auto px-4">
+                        <div className="flex items-center justify-between h-20">
+                            <div>
+                                <h1 className="text-2xl font-bold neon-blue">ENGL465 CAT Learning</h1>
+                                <p className="text-xs neon-purple">Computer Assisted Translation</p>
+                            </div>
+                            <div className="flex gap-3 items-center">
+                                <button
+                                    onClick={() => setCurrentView('dashboard')}
+                                    className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all ${
+                                        currentView === 'dashboard' 
+                                            ? 'bg-[#6EC1E4] text-[#1a1a2e] glow-blue' 
+                                            : 'bg-transparent border border-[#6EC1E4] text-[#6EC1E4] hover:bg-[#6EC1E4] hover:text-[#1a1a2e]'
+                                    }`}
+                                >
+                                    Dashboard
+                                </button>
+                                <button
+                                    onClick={() => setCurrentView('flashcards')}
+                                    className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all ${
+                                        currentView === 'flashcards' 
+                                            ? 'bg-[#B57EDC] text-[#1a1a2e] glow-purple' 
+                                            : 'bg-transparent border border-[#B57EDC] text-[#B57EDC] hover:bg-[#B57EDC] hover:text-[#1a1a2e]'
+                                    }`}
+                                >
+                                    Flashcards
+                                </button>
+                                <button
+                                    onClick={() => setCurrentView('quiz')}
+                                    className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all ${
+                                        currentView === 'quiz' 
+                                            ? 'bg-[#7FFFD4] text-[#1a1a2e] glow-green' 
+                                            : 'bg-transparent border border-[#7FFFD4] text-[#7FFFD4] hover:bg-[#7FFFD4] hover:text-[#1a1a2e]'
+                                    }`}
+                                >
+                                    Quiz
+                                </button>
+                                <button
+                                    onClick={() => setCurrentView('progress')}
+                                    className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all ${
+                                        currentView === 'progress' 
+                                            ? 'bg-[#FFB6C1] text-[#1a1a2e] glow-pink' 
+                                            : 'bg-transparent border border-[#FFB6C1] text-[#FFB6C1] hover:bg-[#FFB6C1] hover:text-[#1a1a2e]'
+                                    }`}
+                                >
+                                    Progress
+                                </button>
+                                <div className="ml-4 text-right">
+                                    <p className="text-lg font-bold neon-green">Level {userProgress.level}</p>
+                                    <p className="text-xs neon-blue">{userProgress.totalXP} XP</p>
+                                    <p className="text-xs neon-pink">🔥 {userProgress.streak} day streak</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        // Dashboard Component
+        function Dashboard({ userProgress, courseData, setCurrentView, setSelectedTopic }) {
+            const completionPercentage = (userProgress.completedTopics.length / courseData.topics.length) * 100;
+
+            return (
+                <div className="space-y-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-bold neon-blue mb-4">Welcome Back, Student!</h2>
+                        <p className="text-xl neon-purple">Ready to master Computer Assisted Translation?</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        <div className="card glow-blue text-center">
+                            <div className="text-5xl neon-blue mb-4">📚</div>
+                            <h3 className="text-2xl font-bold neon-blue mb-2">{courseData.flashcards.length}</h3>
+                            <p className="text-base">Flashcards Available</p>
+                        </div>
+                        <div className="card glow-purple text-center">
+                            <div className="text-5xl neon-purple mb-4">🎯</div>
+                            <h3 className="text-2xl font-bold neon-purple mb-2">{courseData.quizzes.length}</h3>
+                            <p className="text-base">Quiz Questions</p>
+                        </div>
+                        <div className="card glow-green text-center">
+                            <div className="text-5xl neon-green mb-4">🏆</div>
+                            <h3 className="text-2xl font-bold neon-green mb-2">{userProgress.badges.length}</h3>
+                            <p className="text-base">Badges Earned</p>
+                        </div>
+                    </div>
+
+                    <div className="card glow-blue mb-12">
+                        <h3 className="text-2xl font-bold neon-blue mb-6">Course Topics</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {courseData.topics.map((topic, index) => (
+                                <button
+                                    key={topic.id}
+                                    onClick={() => {
+                                        setSelectedTopic(topic.id);
+                                        setCurrentView('flashcards');
+                                    }}
+                                    className="card text-left hover:scale-105 transition-transform"
+                                    style={{ borderColor: topic.color }}
+                                >
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-xl font-bold" style={{ color: topic.color }}>
+                                            {index + 1}
+                                        </span>
+                                        {userProgress.completedTopics.includes(topic.id) && (
+                                            <span className="text-2xl">✅</span>
+                                        )}
+                                    </div>
+                                    <h4 className="text-base font-semibold mb-2">{topic.name}</h4>
+                                    <div className="w-full bg-gray-700 rounded-full h-2.5 mt-3">
+                                        <div
+                                            className="h-2.5 rounded-full transition-all"
+                                            style={{
+                                                width: `${userProgress.completedTopics.includes(topic.id) ? 100 : Math.random() * 60}%`,
+                                                backgroundColor: topic.color
+                                            }}
+                                        ></div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <button
+                            onClick={() => setCurrentView('flashcards')}
+                            className="card glow-purple hover:scale-105 transition-transform text-center py-12"
+                        >
+                            <div className="text-6xl mb-4">🎴</div>
+                            <h3 className="text-2xl font-bold neon-purple mb-3">Start Flashcards</h3>
+                            <p className="text-base">Review and master key concepts</p>
+                        </button>
+                        <button
+                            onClick={() => setCurrentView('quiz')}
+                            className="card glow-green hover:scale-105 transition-transform text-center py-12"
+                        >
+                            <div className="text-6xl mb-4">🎮</div>
+                            <h3 className="text-2xl font-bold neon-green mb-3">Take Quiz</h3>
+                            <p className="text-base">Test your knowledge and earn XP</p>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Flashcard View Component
+        function FlashcardView({ courseData, selectedTopic, userProgress, setUserProgress, addXP }) {
+            const [currentCardIndex, setCurrentCardIndex] = useState(0);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [filterTopic, setFilterTopic] = useState(selectedTopic || 'all');
+            
+            const filteredCards = filterTopic === 'all' 
+                ? courseData.flashcards 
+                : courseData.flashcards.filter(card => card.topic === filterTopic);
+            
+            const currentCard = filteredCards[currentCardIndex];
+
+            const handleFlip = () => {
+                setIsFlipped(!isFlipped);
+            };
+
+            const handleNext = () => {
+                setIsFlipped(false);
+                setCurrentCardIndex((prev) => (prev + 1) % filteredCards.length);
+            };
+
+            const handlePrevious = () => {
+                setIsFlipped(false);
+                setCurrentCardIndex((prev) => (prev - 1 + filteredCards.length) % filteredCards.length);
+            };
+
+            const handleMastery = (level) => {
+                addXP(level === 'mastered' ? 20 : level === 'learning' ? 10 : 5);
+                setUserProgress(prev => ({
+                    ...prev,
+                    flashcardProgress: {
+                        ...prev.flashcardProgress,
+                        [currentCard.id]: {
+                            ...prev.flashcardProgress[currentCard.id],
+                            mastery: level,
+                            reviewCount: (prev.flashcardProgress[currentCard.id]?.reviewCount || 0) + 1
+                        }
+                    }
+                }));
+                handleNext();
+            };
+
+            if (!currentCard) {
+                return (
+                    <div className="text-center py-20">
+                        <h2 className="text-3xl font-bold neon-blue mb-6">No flashcards available</h2>
+                        <p className="text-xl">Select a different topic or view all cards</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-4xl mx-auto">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold neon-blue mb-6">Flashcard Study</h2>
+                        <div className="flex items-center gap-4 mb-6">
+                            <label className="text-base">Filter by topic:</label>
+                            <select
+                                value={filterTopic}
+                                onChange={(e) => {
+                                    setFilterTopic(e.target.value === 'all' ? 'all' : parseInt(e.target.value));
+                                    setCurrentCardIndex(0);
+                                    setIsFlipped(false);
+                                }}
+                                className="px-5 py-2.5 rounded-lg bg-[#16213e] border border-[#6EC1E4] text-white text-base"
+                            >
+                                <option value="all">All Topics</option>
+                                {courseData.topics.map(topic => (
+                                    <option key={topic.id} value={topic.id}>{topic.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <p className="text-xl neon-purple">Card {currentCardIndex + 1} of {filteredCards.length}</p>
+                    </div>
+
+                    <div
+                        className={`flashcard ${isFlipped ? 'flipped' : ''} mb-8`}
+                        onClick={handleFlip}
+                    >
+                        <div className="flashcard-inner">
+                            <div className="flashcard-front glow-blue">
+                                <div>
+                                    <p className="text-xs neon-blue mb-4">QUESTION</p>
+                                    <p className="text-2xl font-semibold">{currentCard.front}</p>
+                                    <p className="text-base neon-purple mt-6">Click to flip</p>
+                                </div>
+                            </div>
+                            <div className="flashcard-back glow-purple">
+                                <div>
+                                    <p className="text-xs neon-purple mb-4">ANSWER</p>
+                                    <p className="text-lg leading-relaxed">{currentCard.back}</p>
+                                    <p className="text-base neon-green mt-6">Click to flip back</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4 mb-8">
+                        <button
+                            onClick={handlePrevious}
+                            className="flex-1 px-7 py-3.5 rounded-lg bg-transparent border-2 border-[#B57EDC] text-[#B57EDC] text-lg font-semibold hover:bg-[#B57EDC] hover:text-[#1a1a2e] transition-all glow-purple"
+                        >
+                            ← Previous
+                        </button>
+                        <button
+                            onClick={handleNext}
+                            className="flex-1 px-7 py-3.5 rounded-lg bg-transparent border-2 border-[#B57EDC] text-[#B57EDC] text-lg font-semibold hover:bg-[#B57EDC] hover:text-[#1a1a2e] transition-all glow-purple"
+                        >
+                            Next →
+                        </button>
+                    </div>
+
+                    {isFlipped && (
+                        <div className="card glow-green">
+                            <h3 className="text-xl font-bold neon-green mb-4">How well did you know this?</h3>
+                            <div className="grid grid-cols-3 gap-4">
+                                <button
+                                    onClick={() => handleMastery('new')}
+                                    className="px-5 py-3.5 rounded-lg bg-[#ff6969] hover:bg-[#ff5050] text-white text-base font-semibold transition-all"
+                                >
+                                    😕 Again (+5 XP)
+                                </button>
+                                <button
+                                    onClick={() => handleMastery('learning')}
+                                    className="px-5 py-3.5 rounded-lg bg-[#FFB6C1] hover:bg-[#ff9fb3] text-[#1a1a2e] text-base font-semibold transition-all"
+                                >
+                                    🤔 Good (+10 XP)
+                                </button>
+                                <button
+                                    onClick={() => handleMastery('mastered')}
+                                    className="px-5 py-3.5 rounded-lg bg-[#7FFFD4] hover:bg-[#5fffcc] text-[#1a1a2e] text-base font-semibold transition-all"
+                                >
+                                    😄 Easy (+20 XP)
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Quiz View Component
+        function QuizView({ courseData, selectedTopic, addXP, userProgress, setUserProgress }) {
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+            const [score, setScore] = useState(0);
+            const [quizComplete, setQuizComplete] = useState(false);
+            const [timeLeft, setTimeLeft] = useState(60);
+            const [filterTopic, setFilterTopic] = useState(selectedTopic || 'all');
+
+            const filteredQuizzes = filterTopic === 'all'
+                ? courseData.quizzes
+                : courseData.quizzes.filter(quiz => quiz.topic === filterTopic);
+
+            const currentQuestion = filteredQuizzes[currentQuestionIndex];
+
+            useEffect(() => {
+                if (!showFeedback && !quizComplete && timeLeft > 0) {
+                    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+                    return () => clearTimeout(timer);
+                } else if (timeLeft === 0 && !showFeedback) {
+                    handleAnswer(null);
+                }
+            }, [timeLeft, showFeedback, quizComplete]);
+
+            const handleAnswer = (answerIndex) => {
+                setSelectedAnswer(answerIndex);
+                setShowFeedback(true);
+                
+                if (answerIndex === currentQuestion.correct) {
+                    const earnedXP = timeLeft > 45 ? 30 : timeLeft > 30 ? 20 : 15;
+                    setScore(score + 1);
+                    addXP(earnedXP);
+                }
+            };
+
+            const handleNext = () => {
+                if (currentQuestionIndex < filteredQuizzes.length - 1) {
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                    setSelectedAnswer(null);
+                    setShowFeedback(false);
+                    setTimeLeft(60);
+                } else {
+                    setQuizComplete(true);
+                    const percentage = (score / filteredQuizzes.length) * 100;
+                    if (percentage >= 80) {
+                        addXP(100);
+                        setUserProgress(prev => ({
+                            ...prev,
+                            badges: [...prev.badges, `Quiz Master: ${courseData.topics.find(t => t.id === filterTopic)?.name || 'All Topics'}`]
+                        }));
+                    }
+                }
+            };
+
+            const resetQuiz = () => {
+                setCurrentQuestionIndex(0);
+                setSelectedAnswer(null);
+                setShowFeedback(false);
+                setScore(0);
+                setQuizComplete(false);
+                setTimeLeft(60);
+            };
+
+            if (quizComplete) {
+                const percentage = (score / filteredQuizzes.length) * 100;
+                return (
+                    <div className="max-w-4xl mx-auto text-center">
+                        <div className="card glow-blue mb-8">
+                            <div className="text-7xl mb-6">
+                                {percentage >= 80 ? '🏆' : percentage >= 60 ? '🎉' : '📚'}
+                            </div>
+                            <h2 className="text-4xl font-bold neon-blue mb-6">Quiz Complete!</h2>
+                            <p className="text-3xl neon-green mb-4">Score: {score}/{filteredQuizzes.length}</p>
+                            <p className="text-2xl neon-purple mb-8">{percentage.toFixed(0)}%</p>
+                            {percentage >= 80 && (
+                                <div className="mb-8">
+                                    <p className="text-xl neon-pink mb-4">🎖️ New Badge Earned! +100 XP</p>
+                                    <div className="badge badge-gold text-base">
+                                        Quiz Master: {courseData.topics.find(t => t.id === filterTopic)?.name || 'All Topics'}
+                                    </div>
+                                </div>
+                            )}
+                            <button
+                                onClick={resetQuiz}
+                                className="px-9 py-4 rounded-lg bg-[#6EC1E4] text-[#1a1a2e] text-xl font-bold hover:bg-[#5eb1d4] transition-all glow-blue"
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!currentQuestion) {
+                return (
+                    <div className="text-center py-20">
+                        <h2 className="text-3xl font-bold neon-blue mb-6">No quiz questions available</h2>
+                        <p className="text-xl">Select a different topic or view all questions</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-4xl mx-auto">
+                    <div className="mb-8">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-3xl font-bold neon-blue">Quiz Time!</h2>
+                            <div className="text-right">
+                                <p className="text-2xl font-bold neon-pink">⏱️ {timeLeft}s</p>
+                                <p className="text-base neon-purple">Question {currentQuestionIndex + 1}/{filteredQuizzes.length}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4 mb-6">
+                            <label className="text-base">Filter by topic:</label>
+                            <select
+                                value={filterTopic}
+                                onChange={(e) => {
+                                    setFilterTopic(e.target.value === 'all' ? 'all' : parseInt(e.target.value));
+                                    resetQuiz();
+                                }}
+                                className="px-5 py-2.5 rounded-lg bg-[#16213e] border border-[#6EC1E4] text-white text-base"
+                            >
+                                <option value="all">All Topics</option>
+                                {courseData.topics.map(topic => (
+                                    <option key={topic.id} value={topic.id}>{topic.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="card glow-purple mb-8">
+                        <h3 className="text-2xl font-semibold mb-8">{currentQuestion.question}</h3>
+                        <div className="space-y-4">
+                            {currentQuestion.options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => !showFeedback && handleAnswer(index)}
+                                    disabled={showFeedback}
+                                    className={`quiz-option w-full px-7 py-4 rounded-lg text-left text-base border-2 transition-all ${
+                                        showFeedback
+                                            ? index === currentQuestion.correct
+                                                ? 'correct'
+                                                : index === selectedAnswer
+                                                ? 'incorrect'
+                                                : 'border-gray-600'
+                                            : 'border-[#B57EDC] hover:bg-[rgba(181,126,220,0.2)]'
+                                    }`}
+                                >
+                                    <span className="font-bold neon-purple mr-4">{String.fromCharCode(65 + index)}.</span>
+                                    {option}
+                                    {showFeedback && index === currentQuestion.correct && (
+                                        <span className="float-right text-2xl">✅</span>
+                                    )}
+                                    {showFeedback && index === selectedAnswer && index !== currentQuestion.correct && (
+                                        <span className="float-right text-2xl">❌</span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {showFeedback && (
+                        <div className={`card ${selectedAnswer === currentQuestion.correct ? 'glow-green' : 'glow-pink'} mb-8 celebrate`}>
+                            <h3 className={`text-2xl font-bold mb-4 ${
+                                selectedAnswer === currentQuestion.correct ? 'neon-green' : 'neon-pink'
+                            }`}>
+                                {selectedAnswer === currentQuestion.correct ? '🎉 Correct!' : '❌ Not quite!'}
+                            </h3>
+                            <p className="text-base mb-4">{currentQuestion.explanation}</p>
+                            {selectedAnswer === currentQuestion.correct && (
+                                <p className="text-xl neon-green">
+                                    +{timeLeft > 45 ? 30 : timeLeft > 30 ? 20 : 15} XP earned!
+                                </p>
+                            )}
+                            <button
+                                onClick={handleNext}
+                                className="mt-6 px-9 py-4 rounded-lg bg-[#6EC1E4] text-[#1a1a2e] text-xl font-bold hover:bg-[#5eb1d4] transition-all glow-blue"
+                            >
+                                {currentQuestionIndex < filteredQuizzes.length - 1 ? 'Next Question →' : 'See Results'}
+                            </button>
+                        </div>
+                    )}
+
+                    <div className="card glow-blue">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-lg neon-blue">Current Score</p>
+                                <p className="text-3xl font-bold neon-green">{score}/{currentQuestionIndex + (showFeedback ? 1 : 0)}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-lg neon-purple">Accuracy</p>
+                                <p className="text-3xl font-bold neon-pink">
+                                    {currentQuestionIndex + (showFeedback ? 1 : 0) > 0
+                                        ? ((score / (currentQuestionIndex + (showFeedback ? 1 : 0))) * 100).toFixed(0)
+                                        : 0}%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Progress View Component
+        function ProgressView({ userProgress, courseData }) {
+            const completionPercentage = (userProgress.completedTopics.length / courseData.topics.length) * 100;
+            const radius = 120;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (completionPercentage / 100) * circumference;
+
+            const masteredCards = Object.values(userProgress.flashcardProgress).filter(
+                p => p.mastery === 'mastered'
+            ).length;
+            const learningCards = Object.values(userProgress.flashcardProgress).filter(
+                p => p.mastery === 'learning'
+            ).length;
+            const newCards = courseData.flashcards.length - masteredCards - learningCards;
+
+            return (
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-4xl font-bold neon-blue mb-12 text-center">Your Progress</h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        <div className="card glow-blue text-center">
+                            <h3 className="text-2xl font-bold neon-blue mb-8">Course Completion</h3>
+                            <svg className="progress-ring mx-auto" width="280" height="280">
+                                <circle
+                                    cx="140"
+                                    cy="140"
+                                    r={radius}
+                                    fill="transparent"
+                                    stroke="rgba(110, 193, 228, 0.2)"
+                                    strokeWidth="20"
+                                />
+                                <circle
+                                    className="progress-ring-circle"
+                                    cx="140"
+                                    cy="140"
+                                    r={radius}
+                                    fill="transparent"
+                                    strokeWidth="20"
+                                    strokeDasharray={circumference}
+                                    strokeDashoffset={strokeDashoffset}
+                                />
+                                <text
+                                    x="140"
+                                    y="140"
+                                    textAnchor="middle"
+                                    dy="0.3em"
+                                    fontSize="40"
+                                    fontWeight="bold"
+                                    fill="#6EC1E4"
+                                >
+                                    {completionPercentage.toFixed(0)}%
+                                </text>
+                            </svg>
+                            <p className="text-lg mt-6">{userProgress.completedTopics.length}/{courseData.topics.length} Topics Completed</p>
+                        </div>
+
+                        <div className="card glow-purple">
+                            <h3 className="text-2xl font-bold neon-purple mb-8">Level & XP</h3>
+                            <div className="text-center mb-8">
+                                <p className="text-6xl font-bold neon-green mb-4">{userProgress.level}</p>
+                                <p className="text-lg">Current Level</p>
+                            </div>
+                            <div className="mb-6">
+                                <div className="flex justify-between mb-2">
+                                    <span className="text-base">XP Progress</span>
+                                    <span className="text-base neon-blue">{userProgress.totalXP % 250}/250</span>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-5">
+                                    <div
+                                        className="h-5 rounded-full bg-gradient-to-r from-[#6EC1E4] to-[#B57EDC]"
+                                        style={{ width: `${((userProgress.totalXP % 250) / 250) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg neon-pink">Total XP: {userProgress.totalXP}</p>
+                                <p className="text-base mt-2">{250 - (userProgress.totalXP % 250)} XP to Level {userProgress.level + 1}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card glow-green mb-12">
+                        <h3 className="text-2xl font-bold neon-green mb-8">Flashcard Mastery</h3>
+                        <div className="grid grid-cols-3 gap-6 mb-8">
+                            <div className="text-center">
+                                <p className="text-5xl font-bold neon-green mb-2">{masteredCards}</p>
+                                <p className="text-lg">Mastered</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-5xl font-bold neon-pink mb-2">{learningCards}</p>
+                                <p className="text-lg">Learning</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-5xl font-bold neon-blue mb-2">{newCards}</p>
+                                <p className="text-lg">New</p>
+                            </div>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-7">
+                            <div className="flex h-7 rounded-full overflow-hidden">
+                                <div
+                                    className="bg-[#7FFFD4]"
+                                    style={{ width: `${(masteredCards / courseData.flashcards.length) * 100}%` }}
+                                ></div>
+                                <div
+                                    className="bg-[#FFB6C1]"
+                                    style={{ width: `${(learningCards / courseData.flashcards.length) * 100}%` }}
+                                ></div>
+                                <div
+                                    className="bg-[#6EC1E4]"
+                                    style={{ width: `${(newCards / courseData.flashcards.length) * 100}%` }}
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card glow-pink mb-12">
+                        <h3 className="text-2xl font-bold neon-pink mb-8">Achievements & Badges</h3>
+                        {userProgress.badges.length > 0 ? (
+                            <div className="flex flex-wrap gap-4">
+                                {userProgress.badges.map((badge, index) => (
+                                    <div key={index} className="badge badge-gold text-base">
+                                        🏆 {badge}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-lg text-center">Complete quizzes with 80%+ to earn badges!</p>
+                        )}
+                    </div>
+
+                    <div className="card glow-blue">
+                        <h3 className="text-2xl font-bold neon-blue mb-8">Study Streak</h3>
+                        <div className="text-center">
+                            <p className="text-7xl mb-4">🔥</p>
+                            <p className="text-5xl font-bold neon-pink mb-4">{userProgress.streak}</p>
+                            <p className="text-2xl">Day Streak!</p>
+                            <p className="text-base mt-6">Keep studying daily to maintain your streak</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
