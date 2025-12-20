@@ -1593,7 +1593,7 @@
                                     key={index}
                                     onClick={() => !showFeedback && handleAnswer(index)}
                                     disabled={showFeedback}
-                                    className={`quiz-option w-full px-7 py-4 rounded-lg text-left text-base border-2 transition-all ${
+                                    className={`quiz-option w-full rounded-lg text-left text-lg leading-relaxed border-2 transition-all ${
                                         showFeedback
                                             ? index === currentQuestion.correct
                                                 ? 'correct'
