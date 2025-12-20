@@ -151,12 +151,12 @@
         .celebrate {
             animation: celebrate 0.5s ease-in-out;
         }
-        
         .quiz-option {
-            transition: all 0.3s ease;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
+    transition: all 0.3s ease;
+    min-height: auto;           /* Changed from 80px to auto */
+    display: flex;
+    align-items: flex-start;    /* Changed from center to flex-start */
+    padding: 20px;              /* Added consistent padding */
         }
         
         .quiz-option:hover {
