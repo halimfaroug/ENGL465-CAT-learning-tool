@@ -3,57 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CATalyst Academy - Master Computer Assisted Translation</title>
+    <title>CATalyst Academy - Computer Assisted Translation Learning</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #2563eb;
-            --primary-indigo: #4f46e5;
-            --primary-teal: #0d9488;
-            --primary-rose: #e11d48;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --text-light: #f1f5f9;
-            --text-muted: #94a3b8;
+            --primary-blue: #1d4ed8;
+            --primary-indigo: #4338ca;
+            --accent-teal: #0d9488;
+            --accent-amber: #f59e0b;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --bg-light: #ffffff;
+            --bg-card: #f9fafb;
+            --border-color: #e5e7eb;
         }
         
         * {
-            transition: all 0.2s ease-in-out;
             box-sizing: border-box;
+            transition: all 0.2s ease;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            color: var(--text-light);
-            overflow-x: hidden;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
         }
         
         h1, h2, h3, h4, h5 {
-            font-family: 'Source Sans Pro', sans-serif;
+            font-family: 'Source Serif Pro', serif;
             font-weight: 600;
+            color: #111827;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            gap: 8px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
             color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.25);
         }
         
         .btn-primary:active {
@@ -61,38 +75,207 @@
         }
         
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-light);
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            font-size: 16px;
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
         }
         
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(29, 78, 216, 0.05);
             transform: translateY(-2px);
         }
         
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        .btn-outline {
+            background: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
         }
         
-        .card-hover {
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             transition: all 0.3s ease;
         }
         
-        .card-hover:hover {
-            transform: translateY(-5px);
-            border-color: rgba(37, 99, 235, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+            border-color: #d1d5db;
+        }
+        
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+        
+        /* Navigation */
+        .nav-link {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background: #f3f4f6;
+            color: var(--primary-blue);
+        }
+        
+        .nav-link.active {
+            background: rgba(29, 78, 216, 0.1);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        /* Progress Bars */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        
+        /* Badge Styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: var(--text-dark);
+        }
+        
+        .badge-primary {
+            background: rgba(29, 78, 216, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .badge-success {
+            background: rgba(13, 148, 136, 0.1);
+            color: var(--accent-teal);
+        }
+        
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-amber);
+        }
+        
+        /* Flashcard Styles */
+        .flashcard-container {
+            perspective: 1000px;
+            min-height: 280px;
+            cursor: pointer;
+        }
+        
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.05), white);
+            border: 2px solid rgba(29, 78, 216, 0.1);
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.05), white);
+            border: 2px solid rgba(13, 148, 136, 0.1);
+            transform: rotateY(180deg);
+        }
+        
+        /* Quiz Options */
+        .quiz-option {
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover {
+            border-color: var(--primary-blue);
+            background: rgba(29, 78, 216, 0.03);
+        }
+        
+        .quiz-option.selected {
+            border-color: var(--primary-blue);
+            background: rgba(29, 78, 216, 0.08);
+        }
+        
+        .quiz-option.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.08);
+        }
+        
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.08);
+        }
+        
+        /* Forms and Inputs */
+        select, input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: white;
+        }
+        
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
         }
         
         /* Loading Animation */
@@ -102,177 +285,26 @@
         }
         
         .fade-in {
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.4s ease-out;
         }
         
-        /* Progress Bars */
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-teal));
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-        
-        /* Flashcard Styles */
-        .flashcard {
-            perspective: 1000px;
-            cursor: pointer;
-            min-height: 280px;
-        }
-        
-        .flashcard-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        
-        .flashcard.flipped .flashcard-inner {
-            transform: rotateY(180deg);
-        }
-        
-        .flashcard-front, .flashcard-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            padding: 32px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .flashcard-front {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(79, 70, 229, 0.1));
-            border: 2px solid rgba(37, 99, 235, 0.3);
-        }
-        
-        .flashcard-back {
-            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(37, 99, 235, 0.1));
-            border: 2px solid rgba(13, 148, 136, 0.3);
-            transform: rotateY(180deg);
-        }
-        
-        /* Badge Styles */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .badge-primary {
-            background: rgba(37, 99, 235, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(37, 99, 235, 0.3);
-        }
-        
-        .badge-success {
-            background: rgba(13, 148, 136, 0.2);
-            color: #2dd4bf;
-            border: 1px solid rgba(13, 148, 136, 0.3);
-        }
-        
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        
-        /* Input and Select Styles */
-        select, input, textarea {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: var(--text-light);
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-        }
-        
-        select:focus, input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        }
-        
-        /* Matecat Simulation */
-        .matecat-editor {
-            background: #1a202c;
-            border: 1px solid #4a5568;
-            border-radius: 12px;
+        /* Stats Cards */
+        .stat-card {
+            text-align: center;
             padding: 20px;
         }
         
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
         }
         
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .btn-primary, .btn-secondary {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .glass-card {
-                padding: 20px !important;
-            }
-            
-            .flashcard {
-                min-height: 240px;
-            }
-            
-            .flashcard-front, .flashcard-back {
-                padding: 20px;
-            }
-        }
-        
-        /* Active States */
-        .nav-active {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(79, 70, 229, 0.2));
-            border: 1px solid rgba(37, 99, 235, 0.3);
-        }
-        
-        /* Hover Effects */
-        .hover-lift {
-            transition: transform 0.2s ease;
-        }
-        
-        .hover-lift:hover {
-            transform: translateY(-3px);
-        }
-        
-        /* Loading Screen */
-        #loading-screen {
-            animation: fadeOut 0.5s ease 1.5s forwards;
-        }
-        
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
-        }
-        
-        /* Pulse Animation */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
         
         /* Developer Credit */
@@ -280,43 +312,82 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: white;
+            border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 12px 20px;
             font-size: 12px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             z-index: 1000;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        /* Topic Cards */
+        .topic-card {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .topic-card:hover {
+            border-color: var(--primary-blue);
+            background: rgba(29, 78, 216, 0.03);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .flashcard-front, .flashcard-back {
+                padding: 24px;
+            }
+            
+            .stat-number {
+                font-size: 28px;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
     </style>
 </head>
-<body>
-    <div id="loading-screen" class="fixed inset-0 bg-[#0f172a] z-[9999] flex flex-col items-center justify-center">
-        <div class="relative mb-8">
-            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#4f46e5] flex items-center justify-center animate-pulse">
-                <div class="text-white font-bold text-2xl">CAT</div>
-            </div>
-        </div>
-        <div class="text-center">
-            <h2 class="text-3xl font-bold text-white mb-4">CATalyst Academy</h2>
-            <div class="w-64 h-2 bg-gray-800 rounded-full overflow-hidden mt-6">
-                <div class="h-full bg-gradient-to-r from-[#2563eb] to-[#0d9488] rounded-full" style="animation: loader 1.5s ease-in-out infinite"></div>
-            </div>
-        </div>
-        <style>
-            @keyframes loader {
-                0% { transform: translateX(-100%); }
-                100% { transform: translateX(100%); }
-            }
-        </style>
-    </div>
-
+<body class="antialiased">
     <div id="root"></div>
     
     <div class="developer-credit">
-        <p class="text-[#60a5fa] font-semibold text-sm">💻 Developed by</p>
-        <p class="text-white font-bold text-base">Halim Faroug A. Elhag</p>
-        <p class="text-[#94a3b8] text-xs">Lecturer of English Language, UHB/UofK</p>
+        <p class="font-semibold text-[#1d4ed8] text-sm">Developed by</p>
+        <p class="font-bold text-gray-900">Halim Faroug A. Elhag</p>
+        <p class="text-gray-500 text-xs">Lecturer of English Language, UHB/UofK</p>
     </div>
 
     <script type="text/babel">
@@ -325,34 +396,80 @@
         // Course Data
         const courseData = {
             topics: [
-                { id: 1, name: "Introduction to CAT", color: "#2563eb", icon: "🚀" },
-                { id: 2, name: "Translator's Workstation", color: "#4f46e5", icon: "💻" },
-                { id: 3, name: "Translation Memory Systems", color: "#0d9488", icon: "💾" },
-                { id: 4, name: "Terminology Tools", color: "#e11d48", icon: "📚" },
-                { id: 5, name: "Localization & Translation", color: "#2563eb", icon: "🌍" },
-                { id: 6, name: "Minority Languages", color: "#4f46e5", icon: "🗣️" },
-                { id: 7, name: "Corpora & Translation", color: "#0d9488", icon: "📊" },
-                { id: 8, name: "MT Challenges", color: "#e11d48", icon: "⚡" },
-                { id: 9, name: "Linguistics in MT", color: "#2563eb", icon: "🔤" },
-                { id: 10, name: "Commercial MT", color: "#4f46e5", icon: "💰" },
-                { id: 11, name: "MT Evaluation", color: "#0d9488", icon: "📈" },
-                { id: 12, name: "Sublanguage", color: "#e11d48", icon: "🎯" },
-                { id: 13, name: "Post-Editing", color: "#2563eb", icon: "✏️" },
-                { id: 14, name: "MT in Classroom", color: "#4f46e5", icon: "🏫" }
+                { id: 1, name: "Introduction to CAT", color: "#1d4ed8", icon: "🚀" },
+                { id: 2, name: "Translator's Workstation", color: "#4338ca", icon: "💻" },
+                { id: 3, name: "Translation Memory", color: "#0d9488", icon: "💾" },
+                { id: 4, name: "Terminology Tools", color: "#f59e0b", icon: "📚" },
+                { id: 5, name: "Localization", color: "#1d4ed8", icon: "🌍" },
+                { id: 6, name: "Corpora & Translation", color: "#4338ca", icon: "📊" },
+                { id: 7, name: "MT Challenges", color: "#0d9488", icon: "⚡" },
+                { id: 8, name: "Linguistics in MT", color: "#f59e0b", icon: "🔤" }
             ],
             
             flashcards: [
-                { id: 1, topic: 1, front: "What is Computer-Assisted Translation (CAT)?", back: "The use of computer programs and tools to help human translators create accurate, efficient, and consistent translations.", mastery: "new" },
-                { id: 2, topic: 1, front: "What was the ALPAC Report and its impact?", back: "A 1966 report that found MT systems slower and more expensive than human translators, leading to a shift toward CAT tools.", mastery: "new" },
-                { id: 3, topic: 1, front: "What is the difference between MT and CAT?", back: "MT tries to automate translation, while CAT supports human translators with tools like TM and terminology databases.", mastery: "new" },
-                { id: 4, topic: 1, front: "When did CAT tools like Trados emerge?", back: "By the 1980s, tools like Trados revolutionized the industry with Translation Memory features.", mastery: "new" },
-                { id: 5, topic: 2, front: "What is a translator's workstation?", back: "An ecosystem of tools designed to enhance productivity, accuracy, and consistency in translation workflows.", mastery: "new" }
+                { id: 1, topic: 1, front: "What is Computer-Assisted Translation (CAT)?", back: "CAT refers to the use of computer software to assist human translators in the translation process, improving efficiency and consistency.", mastery: "new" },
+                { id: 2, topic: 1, front: "What was the main impact of the ALPAC Report?", back: "The 1966 ALPAC Report concluded that machine translation was not ready for practical use, leading to increased focus on CAT tools instead.", mastery: "new" },
+                { id: 3, topic: 1, front: "What's the key difference between MT and CAT?", back: "MT tries to fully automate translation, while CAT supports human translators with tools like translation memory and terminology management.", mastery: "new" },
+                { id: 4, topic: 2, front: "What is a translator's workstation?", back: "An integrated environment combining various tools (TM, terminology, QA) to support the translator's workflow and improve productivity.", mastery: "new" },
+                { id: 5, topic: 3, front: "What is Translation Memory?", back: "A database that stores previously translated segments for reuse, ensuring consistency and reducing translation time for repetitive content.", mastery: "new" },
+                { id: 6, topic: 3, front: "What does TMX stand for?", back: "Translation Memory eXchange - a standard XML format for exchanging translation memory data between different CAT tools.", mastery: "new" },
+                { id: 7, topic: 4, front: "What is terminology management?", back: "The systematic collection, organization, and use of specialized vocabulary to ensure consistency in translation projects.", mastery: "new" },
+                { id: 8, topic: 4, front: "What are term banks?", back: "Large-scale terminology databases containing detailed information about terms, often used by organizations and institutions.", mastery: "new" }
             ],
             
             quizzes: [
-                { id: 1, topic: 1, question: "What was the main finding of the 1966 ALPAC Report?", options: ["MT systems were faster and cheaper", "MT systems were slower and more expensive", "MT systems were ready for commercial deployment", "MT should replace all human translators"], correct: 1, explanation: "The ALPAC report found MT systems were slower, less accurate, and twice as expensive as human translators." },
-                { id: 2, topic: 1, question: "Which feature is NOT a key component of CAT tools?", options: ["Translation Memory", "Terminology Management", "Complete automation", "Quality Assurance checks"], correct: 2, explanation: "CAT tools assist translators, not completely automate translation." },
-                { id: 3, topic: 2, question: "Who proposed the translator's workstation concept in 1980?", options: ["Peter Arthern", "Martin Kay", "Alan Melby", "Warren Weaver"], correct: 1, explanation: "Martin Kay's 1980 memo proposed the translator's workstation concept." }
+                { 
+                    id: 1, 
+                    topic: 1, 
+                    question: "What was the main finding of the 1966 ALPAC Report?", 
+                    options: [
+                        "MT systems were ready for commercial use",
+                        "MT systems were slower and more expensive than human translators",
+                        "MT should replace all human translators",
+                        "CAT tools were unnecessary"
+                    ], 
+                    correct: 1, 
+                    explanation: "The ALPAC Report found that MT systems were slower, less accurate, and twice as expensive as human translators, leading to increased focus on CAT tools." 
+                },
+                { 
+                    id: 2, 
+                    topic: 1, 
+                    question: "Which feature is NOT a core component of CAT tools?", 
+                    options: [
+                        "Translation Memory",
+                        "Terminology Management",
+                        "Full automation of translation",
+                        "Quality Assurance checks"
+                    ], 
+                    correct: 2, 
+                    explanation: "CAT tools assist translators rather than fully automating the process. The translator remains in control while being supported by various tools." 
+                },
+                { 
+                    id: 3, 
+                    topic: 3, 
+                    question: "What is a fuzzy match in Translation Memory?", 
+                    options: [
+                        "An exact duplicate of a stored segment",
+                        "A similar but not identical match",
+                        "A match in a different language",
+                        "A grammatical error detection"
+                    ], 
+                    correct: 1, 
+                    explanation: "A fuzzy match occurs when the source text is similar (typically 70-99% match) but not identical to a segment in the translation memory." 
+                },
+                { 
+                    id: 4, 
+                    topic: 4, 
+                    question: "What is the main purpose of terminology management?", 
+                    options: [
+                        "To reduce translation costs",
+                        "To ensure consistent use of terms",
+                        "To automate translation",
+                        "To check grammar"
+                    ], 
+                    correct: 1, 
+                    explanation: "Terminology management ensures that specific terms are used consistently throughout a translation project, which is crucial for technical and specialized content." 
+                }
             ]
         };
 
@@ -362,24 +479,17 @@
             const [selectedTopic, setSelectedTopic] = useState(null);
             const [userProgress, setUserProgress] = useState({
                 completedTopics: [1, 2],
-                totalXP: 250,
+                totalXP: 320,
                 level: 2,
-                streak: 5,
+                streak: 3,
                 badges: ["First Steps", "Quick Learner"],
                 flashcardProgress: {}
             });
 
             useEffect(() => {
-                setTimeout(() => {
-                    const loadingScreen = document.getElementById('loading-screen');
-                    if (loadingScreen) {
-                        loadingScreen.style.display = 'none';
-                    }
-                }, 1500);
-
                 const initialProgress = {};
                 courseData.flashcards.forEach(card => {
-                    initialProgress[card.id] = { mastery: 'new', reviewCount: 0 };
+                    initialProgress[card.id] = { mastery: 'new', reviewCount: 0, lastReviewed: null };
                 });
                 setUserProgress(prev => ({ ...prev, flashcardProgress: initialProgress }));
             }, []);
@@ -387,19 +497,20 @@
             const addXP = (amount) => {
                 setUserProgress(prev => {
                     const newXP = prev.totalXP + amount;
-                    const newLevel = Math.floor(newXP / 250) + 1;
+                    const newLevel = Math.floor(newXP / 200) + 1;
                     return { ...prev, totalXP: newXP, level: newLevel };
                 });
             };
 
             return (
-                <div className="min-h-screen">
+                <div className="min-h-screen bg-gray-50">
                     <Navigation 
                         currentView={currentView} 
                         setCurrentView={setCurrentView}
                         userProgress={userProgress}
                     />
-                    <main className="container mx-auto px-4 py-8 max-w-7xl mt-4">
+                    
+                    <main className="container mx-auto px-4 py-8 max-w-7xl">
                         {currentView === 'dashboard' && (
                             <Dashboard 
                                 userProgress={userProgress}
@@ -436,36 +547,48 @@
         // Navigation Component
         function Navigation({ currentView, setCurrentView, userProgress }) {
             return (
-                <nav className="glass-card sticky top-0 z-50 mx-4 mt-4">
+                <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
                     <div className="container mx-auto px-6">
                         <div className="flex items-center justify-between h-20">
+                            {/* Logo */}
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563eb] to-[#4f46e5] flex items-center justify-center">
-                                    <span className="text-white font-bold">CAT</span>
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1d4ed8] to-[#4338ca] flex items-center justify-center">
+                                    <span className="text-white font-bold text-lg">CAT</span>
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-bold text-white">CATalyst Academy</h1>
-                                    <p className="text-sm text-[#94a3b8]">Computer Assisted Translation</p>
+                                    <h1 className="text-xl font-bold text-gray-900">CATalyst Academy</h1>
+                                    <p className="text-sm text-gray-500">Computer Assisted Translation</p>
                                 </div>
                             </div>
 
-                            <div className="hidden md:flex items-center gap-2">
-                                {['dashboard', 'flashcards', 'quiz', 'progress'].map(view => (
+                            {/* Navigation Links */}
+                            <div className="hidden md:flex items-center gap-1">
+                                {[
+                                    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+                                    { id: 'flashcards', label: 'Flashcards', icon: '🎴' },
+                                    { id: 'quiz', label: 'Quiz', icon: '🎯' },
+                                    { id: 'progress', label: 'Progress', icon: '📊' }
+                                ].map(item => (
                                     <button
-                                        key={view}
-                                        onClick={() => setCurrentView(view)}
-                                        className={`px-4 py-3 rounded-lg font-medium capitalize ${currentView === view ? 'nav-active text-white' : 'text-[#94a3b8] hover:text-white hover:bg-white/5'}`}
+                                        key={item.id}
+                                        onClick={() => setCurrentView(item.id)}
+                                        className={`nav-link ${currentView === item.id ? 'active' : ''}`}
                                     >
-                                        {view === 'dashboard' ? '🏠 Dashboard' : 
-                                         view === 'flashcards' ? '🎴 Flashcards' : 
-                                         view === 'quiz' ? '🎯 Quiz' : '📊 Progress'}
+                                        <span>{item.icon}</span>
+                                        <span>{item.label}</span>
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="text-right">
-                                <p className="text-sm font-semibold text-white">Level {userProgress.level}</p>
-                                <p className="text-xs text-[#94a3b8]">{userProgress.totalXP} XP</p>
+                            {/* User Info */}
+                            <div className="flex items-center gap-4">
+                                <div className="text-right hidden sm:block">
+                                    <p className="text-sm font-semibold text-gray-900">Level {userProgress.level}</p>
+                                    <p className="text-xs text-gray-500">{userProgress.totalXP} XP • 🔥 {userProgress.streak}</p>
+                                </div>
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1d4ed8] to-[#4338ca] flex items-center justify-center">
+                                    <span className="text-white font-bold">S</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -475,92 +598,126 @@
 
         // Dashboard Component
         function Dashboard({ userProgress, courseData, setCurrentView, setSelectedTopic }) {
+            const completionPercentage = (userProgress.completedTopics.length / courseData.topics.length) * 100;
+            
             return (
-                <div className="space-y-8 fade-in">
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold text-white mb-4">Welcome to CATalyst Academy</h1>
-                        <p className="text-lg text-[#94a3b8]">Master Computer Assisted Translation with interactive learning</p>
+                <div className="fade-in">
+                    {/* Welcome Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to CATalyst Academy</h1>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Master Computer Assisted Translation through interactive learning, practical exercises, and comprehensive resources.
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="glass-card p-6 card-hover">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#2563eb]/20 to-[#4f46e5]/20 flex items-center justify-center">
-                                    <span className="text-2xl">🎴</span>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white">Flashcards</h3>
-                                    <p className="text-sm text-[#94a3b8]">Master key concepts</p>
-                                </div>
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div className="card stat-card">
+                            <div className="stat-number">{courseData.flashcards.length}</div>
+                            <div className="stat-label">Flashcards</div>
+                            <p className="text-sm text-gray-500 mt-2">Interactive learning cards</p>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="stat-number">{courseData.quizzes.length}</div>
+                            <div className="stat-label">Quiz Questions</div>
+                            <p className="text-sm text-gray-500 mt-2">Test your knowledge</p>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="stat-number">{userProgress.badges.length}</div>
+                            <div className="stat-label">Badges Earned</div>
+                            <p className="text-sm text-gray-500 mt-2">Track your achievements</p>
+                        </div>
+                    </div>
+
+                    {/* Course Progress */}
+                    <div className="card mb-8">
+                        <div className="section-header">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">Course Progress</h2>
+                                <p className="text-gray-600">Track your learning journey</p>
                             </div>
-                            <button 
-                                onClick={() => setCurrentView('flashcards')}
-                                className="btn-primary w-full mt-4"
-                            >
+                            <div className="text-right">
+                                <div className="text-2xl font-bold text-[#1d4ed8]">{completionPercentage.toFixed(0)}%</div>
+                                <p className="text-sm text-gray-500">Complete</p>
+                            </div>
+                        </div>
+                        
+                        <div className="progress-container mb-4">
+                            <div className="progress-bar" style={{ width: `${completionPercentage}%` }}></div>
+                        </div>
+                        
+                        <div className="flex justify-between text-sm text-gray-600 mb-6">
+                            <span>{userProgress.completedTopics.length}/{courseData.topics.length} Topics</span>
+                            <span>{userProgress.totalXP} Total XP</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <button className="btn-primary" onClick={() => setCurrentView('flashcards')}>
+                                <i className="fas fa-play"></i>
                                 Start Learning
                             </button>
-                        </div>
-
-                        <div className="glass-card p-6 card-hover">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0d9488]/20 to-[#2563eb]/20 flex items-center justify-center">
-                                    <span className="text-2xl">🎯</span>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white">Quizzes</h3>
-                                    <p className="text-sm text-[#94a3b8]">Test your knowledge</p>
-                                </div>
-                            </div>
-                            <button 
-                                onClick={() => setCurrentView('quiz')}
-                                className="btn-primary w-full mt-4"
-                            >
+                            <button className="btn-secondary" onClick={() => setCurrentView('quiz')}>
+                                <i className="fas fa-question-circle"></i>
                                 Take Quiz
                             </button>
-                        </div>
-
-                        <div className="glass-card p-6 card-hover">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#e11d48]/20 to-[#4f46e5]/20 flex items-center justify-center">
-                                    <span className="text-2xl">📊</span>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white">Progress</h3>
-                                    <p className="text-sm text-[#94a3b8]">Track your learning</p>
-                                </div>
-                            </div>
-                            <button 
-                                onClick={() => setCurrentView('progress')}
-                                className="btn-primary w-full mt-4"
-                            >
-                                View Progress
+                            <button className="btn-outline">
+                                <i className="fas fa-download"></i>
+                                Export Progress
+                            </button>
+                            <button className="btn-outline">
+                                <i className="fas fa-cog"></i>
+                                Settings
                             </button>
                         </div>
                     </div>
 
-                    <div className="glass-card p-6">
-                        <h2 className="text-2xl font-bold text-white mb-6">Course Topics</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {courseData.topics.map(topic => (
-                                <button
-                                    key={topic.id}
-                                    onClick={() => {
-                                        setSelectedTopic(topic.id);
-                                        setCurrentView('flashcards');
-                                    }}
-                                    className="glass-card p-4 text-left hover:bg-white/5 transition-all duration-200"
-                                >
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: topic.color + '20' }}>
-                                            <span className="text-lg">{topic.icon}</span>
+                    {/* Course Topics */}
+                    <div className="card">
+                        <div className="section-header">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">Course Topics</h2>
+                                <p className="text-gray-600">Explore all CAT concepts</p>
+                            </div>
+                            <button className="btn-outline">
+                                <i className="fas fa-filter"></i>
+                                Filter
+                            </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {courseData.topics.map(topic => {
+                                const isCompleted = userProgress.completedTopics.includes(topic.id);
+                                return (
+                                    <button
+                                        key={topic.id}
+                                        onClick={() => {
+                                            setSelectedTopic(topic.id);
+                                            setCurrentView('flashcards');
+                                        }}
+                                        className="topic-card text-left"
+                                    >
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: topic.color + '10', color: topic.color }}>
+                                                <span className="text-xl">{topic.icon}</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900">{topic.name}</h3>
+                                                <p className="text-sm text-gray-500">Topic {topic.id}</p>
+                                            </div>
                                         </div>
-                                        <h3 className="font-semibold text-white">{topic.name}</h3>
-                                    </div>
-                                    <div className="progress-bar">
-                                        <div className="progress-fill" style={{ width: '60%' }}></div>
-                                    </div>
-                                </button>
-                            ))}
+                                        <div className="flex items-center justify-between">
+                                            <div className="progress-container w-3/4">
+                                                <div className="progress-bar" style={{ width: isCompleted ? '100%' : '40%' }}></div>
+                                            </div>
+                                            {isCompleted ? (
+                                                <span className="text-green-600 text-sm font-medium">✓ Complete</span>
+                                            ) : (
+                                                <span className="text-gray-500 text-sm">In Progress</span>
+                                            )}
+                                        </div>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -578,6 +735,7 @@
                 : courseData.flashcards.filter(card => card.topic === filterTopic);
             
             const currentCard = filteredCards[currentCardIndex];
+            const cardProgress = currentCard ? userProgress.flashcardProgress[currentCard.id] : null;
 
             const handleFlip = () => {
                 setIsFlipped(!isFlipped);
@@ -605,7 +763,8 @@
                         ...prev.flashcardProgress,
                         [currentCard.id]: {
                             mastery: masteryLevel === 'easy' ? 'mastered' : masteryLevel === 'again' ? 'new' : 'learning',
-                            reviewCount: (prev.flashcardProgress[currentCard.id]?.reviewCount || 0) + 1
+                            reviewCount: (prev.flashcardProgress[currentCard.id]?.reviewCount || 0) + 1,
+                            lastReviewed: new Date()
                         }
                     }
                 }));
@@ -615,8 +774,10 @@
 
             if (!currentCard) {
                 return (
-                    <div className="text-center py-12">
-                        <h2 className="text-2xl font-bold text-white mb-4">No flashcards found</h2>
+                    <div className="card text-center py-12">
+                        <div className="text-5xl mb-6">🎉</div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">No cards available</h2>
+                        <p className="text-gray-600 mb-6">Select a different topic or view all cards</p>
                         <button 
                             onClick={() => setFilterTopic('all')}
                             className="btn-primary"
@@ -628,12 +789,12 @@
             }
 
             return (
-                <div className="max-w-4xl mx-auto fade-in">
-                    <div className="glass-card p-6 mb-6">
-                        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                <div className="fade-in">
+                    <div className="card mb-6">
+                        <div className="section-header">
                             <div>
-                                <h2 className="text-2xl font-bold text-white mb-2">Flashcard Study</h2>
-                                <p className="text-[#94a3b8]">Master CAT concepts through active recall</p>
+                                <h2 className="text-2xl font-bold text-gray-900">Flashcard Study</h2>
+                                <p className="text-gray-600">Active recall for better memory</p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <select 
@@ -643,7 +804,7 @@
                                         setCurrentCardIndex(0);
                                         setIsFlipped(false);
                                     }}
-                                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white"
+                                    className="border border-gray-300 rounded-lg px-4 py-2"
                                 >
                                     <option value="all">All Topics</option>
                                     {courseData.topics.map(topic => (
@@ -651,14 +812,16 @@
                                     ))}
                                 </select>
                                 <div className="text-right">
-                                    <p className="text-sm text-white">Card {currentCardIndex + 1} of {filteredCards.length}</p>
-                                    <p className="text-xs text-[#94a3b8]">{Math.round((currentCardIndex + 1) / filteredCards.length * 100)}% complete</p>
+                                    <p className="text-sm font-medium text-gray-900">Card {currentCardIndex + 1} of {filteredCards.length}</p>
+                                    <p className="text-xs text-gray-500">
+                                        {cardProgress?.reviewCount || 0} reviews
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="progress-bar mb-6">
-                            <div className="progress-fill" style={{ width: `${((currentCardIndex + 1) / filteredCards.length) * 100}%` }}></div>
+                        <div className="progress-container mb-6">
+                            <div className="progress-bar" style={{ width: `${((currentCardIndex + 1) / filteredCards.length) * 100}%` }}></div>
                         </div>
 
                         <div className="mb-8">
@@ -667,71 +830,84 @@
                                     <span className="badge badge-primary">
                                         Topic {currentCard.topic}
                                     </span>
-                                    <span className="text-sm text-[#94a3b8]">
-                                        Reviewed: {userProgress.flashcardProgress[currentCard.id]?.reviewCount || 0} times
+                                    <span className="text-sm text-gray-500">
+                                        Status: <span className="font-medium">{cardProgress?.mastery?.toUpperCase() || 'NEW'}</span>
                                     </span>
                                 </div>
                             </div>
 
-                            <div 
-                                className={`flashcard mb-8 ${isFlipped ? 'flipped' : ''}`}
-                                onClick={handleFlip}
-                            >
-                                <div className="flashcard-inner">
+                            <div className="flashcard-container mb-8" onClick={handleFlip}>
+                                <div className={`flashcard ${isFlipped ? 'flipped' : ''}`}>
                                     <div className="flashcard-front">
-                                        <div>
-                                            <p className="text-sm font-semibold text-[#60a5fa] mb-4">QUESTION</p>
-                                            <p className="text-xl font-semibold text-white">{currentCard.front}</p>
-                                            <p className="text-sm text-[#94a3b8] mt-8">Click to flip</p>
+                                        <div className="text-center">
+                                            <div className="text-sm font-semibold text-[#1d4ed8] mb-4 uppercase tracking-wider">Question</div>
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-6">{currentCard.front}</h3>
+                                            <p className="text-sm text-gray-500">Click to flip card</p>
                                         </div>
                                     </div>
                                     <div className="flashcard-back">
-                                        <div>
-                                            <p className="text-sm font-semibold text-[#2dd4bf] mb-4">ANSWER</p>
-                                            <p className="text-lg text-white leading-relaxed">{currentCard.back}</p>
-                                            <p className="text-sm text-[#94a3b8] mt-8">Click to flip back</p>
+                                        <div className="text-center">
+                                            <div className="text-sm font-semibold text-[#0d9488] mb-4 uppercase tracking-wider">Answer</div>
+                                            <p className="text-lg text-gray-900 leading-relaxed">{currentCard.back}</p>
+                                            <p className="text-sm text-gray-500 mt-6">Click to flip back</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex justify-between items-center">
-                                <button onClick={handlePrevious} className="btn-secondary">
-                                    ← Previous
+                                <button onClick={handlePrevious} className="btn-outline">
+                                    <i className="fas fa-arrow-left"></i>
+                                    Previous
                                 </button>
-                                <button onClick={handleNext} className="btn-secondary">
-                                    Next →
+                                <div className="text-center">
+                                    <p className="text-sm text-gray-500">Progress</p>
+                                    <p className="font-medium text-gray-900">
+                                        {Object.values(userProgress.flashcardProgress).filter(p => p.mastery === 'mastered').length}/{courseData.flashcards.length} Mastered
+                                    </p>
+                                </div>
+                                <button onClick={handleNext} className="btn-outline">
+                                    Next
+                                    <i className="fas fa-arrow-right"></i>
                                 </button>
                             </div>
                         </div>
 
                         {isFlipped && (
-                            <div className="glass-card p-6 mt-6">
-                                <h3 className="text-lg font-semibold text-white mb-4">How well did you know this?</h3>
+                            <div className="card">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">How well did you know this?</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     <button 
                                         onClick={() => handleMastery('again')}
-                                        className="py-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400"
+                                        className="py-3 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700"
                                     >
-                                        Again (+5 XP)
+                                        <div className="text-xl mb-1">😕</div>
+                                        <div className="font-medium">Again</div>
+                                        <div className="text-xs text-red-600">+5 XP</div>
                                     </button>
                                     <button 
                                         onClick={() => handleMastery('hard')}
-                                        className="py-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-400"
+                                        className="py-3 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700"
                                     >
-                                        Hard (+10 XP)
+                                        <div className="text-xl mb-1">😓</div>
+                                        <div className="font-medium">Hard</div>
+                                        <div className="text-xs text-amber-600">+10 XP</div>
                                     </button>
                                     <button 
                                         onClick={() => handleMastery('good')}
-                                        className="py-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400"
+                                        className="py-3 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700"
                                     >
-                                        Good (+15 XP)
+                                        <div className="text-xl mb-1">😊</div>
+                                        <div className="font-medium">Good</div>
+                                        <div className="text-xs text-blue-600">+15 XP</div>
                                     </button>
                                     <button 
                                         onClick={() => handleMastery('easy')}
-                                        className="py-3 rounded-lg bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400"
+                                        className="py-3 rounded-lg border border-green-200 bg-green-50 hover:bg-green-100 text-green-700"
                                     >
-                                        Easy (+25 XP)
+                                        <div className="text-xl mb-1">😄</div>
+                                        <div className="font-medium">Easy</div>
+                                        <div className="text-xs text-green-600">+25 XP</div>
                                     </button>
                                 </div>
                             </div>
@@ -747,7 +923,7 @@
             const [selectedAnswer, setSelectedAnswer] = useState(null);
             const [showFeedback, setShowFeedback] = useState(false);
             const [score, setScore] = useState(0);
-            const [timeLeft, setTimeLeft] = useState(30);
+            const [timeLeft, setTimeLeft] = useState(45);
             
             const filteredQuizzes = selectedTopic 
                 ? courseData.quizzes.filter(quiz => quiz.topic === selectedTopic)
@@ -768,8 +944,8 @@
                 
                 if (answerIndex === currentQuestion.correct) {
                     setScore(score + 1);
-                    const timeBonus = Math.max(1, Math.floor(timeLeft / 5));
-                    addXP(20 + timeBonus);
+                    const timeBonus = Math.max(5, Math.floor(timeLeft / 3));
+                    addXP(25 + timeBonus);
                 } else {
                     addXP(5);
                 }
@@ -780,113 +956,134 @@
                     setCurrentQuestionIndex(currentQuestionIndex + 1);
                     setSelectedAnswer(null);
                     setShowFeedback(false);
-                    setTimeLeft(30);
+                    setTimeLeft(45);
                 } else {
                     // Quiz complete
-                    alert(`Quiz complete! Score: ${score}/${filteredQuizzes.length}`);
+                    const percentage = (score / filteredQuizzes.length) * 100;
+                    alert(`Quiz Complete!\nScore: ${score}/${filteredQuizzes.length} (${percentage.toFixed(0)}%)\nTotal XP: ${score * 25 + filteredQuizzes.length * 5}`);
                 }
             };
 
             if (!currentQuestion) {
                 return (
-                    <div className="text-center py-12">
-                        <h2 className="text-2xl font-bold text-white mb-4">No questions available</h2>
-                        <p className="text-[#94a3b8] mb-6">Select a different topic or try all questions</p>
+                    <div className="card text-center py-12">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">No questions available</h2>
+                        <p className="text-gray-600 mb-6">Select a different topic or view all questions</p>
+                        <button className="btn-primary" onClick={() => window.location.reload()}>
+                            Refresh Page
+                        </button>
                     </div>
                 );
             }
 
             return (
-                <div className="max-w-4xl mx-auto fade-in">
-                    <div className="glass-card p-6">
-                        <div className="flex justify-between items-start mb-6">
+                <div className="fade-in">
+                    <div className="card mb-6">
+                        <div className="section-header">
                             <div>
-                                <h2 className="text-2xl font-bold text-white mb-2">Quiz Challenge</h2>
-                                <p className="text-[#94a3b8]">Test your CAT knowledge</p>
+                                <h2 className="text-2xl font-bold text-gray-900">Quiz Challenge</h2>
+                                <p className="text-gray-600">Test your CAT knowledge</p>
                             </div>
                             <div className="text-right">
-                                <div className="text-2xl font-bold text-white mb-2">⏱️ {timeLeft}s</div>
-                                <p className="text-sm text-[#94a3b8]">Time remaining</p>
+                                <div className="text-2xl font-bold text-[#1d4ed8] mb-2">⏱️ {timeLeft}s</div>
+                                <p className="text-sm text-gray-500">Time remaining</p>
                             </div>
                         </div>
 
-                        <div className="progress-bar mb-6">
-                            <div className="progress-fill" style={{ width: `${((currentQuestionIndex + 1) / filteredQuizzes.length) * 100}%` }}></div>
+                        <div className="progress-container mb-6">
+                            <div className="progress-bar" style={{ width: `${((currentQuestionIndex + 1) / filteredQuizzes.length) * 100}%` }}></div>
                         </div>
 
-                        <div className="glass-card p-6 mb-6">
+                        <div className="card mb-6">
                             <div className="flex justify-between items-center mb-6">
-                                <div>
-                                    <span className="badge badge-primary">Question {currentQuestionIndex + 1}/{filteredQuizzes.length}</span>
-                                    <span className="text-sm text-[#94a3b8] ml-4">Topic {currentQuestion.topic}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="badge badge-primary">
+                                        Question {currentQuestionIndex + 1}/{filteredQuizzes.length}
+                                    </span>
+                                    <span className="text-sm text-gray-500">Topic {currentQuestion.topic}</span>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm text-[#94a3b8]">Current Score</p>
-                                    <p className="text-lg font-bold text-white">{score}/{currentQuestionIndex + (showFeedback ? 1 : 0)}</p>
+                                    <p className="text-sm text-gray-500">Current Score</p>
+                                    <p className="text-lg font-bold text-gray-900">{score}/{currentQuestionIndex + (showFeedback ? 1 : 0)}</p>
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-semibold text-white mb-6">{currentQuestion.question}</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-6">{currentQuestion.question}</h3>
 
                             <div className="space-y-3">
                                 {currentQuestion.options.map((option, index) => (
-                                    <button
+                                    <div
                                         key={index}
                                         onClick={() => !showFeedback && handleAnswer(index)}
-                                        disabled={showFeedback}
-                                        className={`w-full p-4 text-left rounded-lg transition-all ${showFeedback
-                                            ? index === currentQuestion.correct
-                                                ? 'bg-green-500/10 border border-green-500/20'
-                                                : index === selectedAnswer
-                                                ? 'bg-red-500/10 border border-red-500/20'
-                                                : 'bg-white/5 border border-white/10'
-                                            : 'bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20'
+                                        className={`quiz-option ${showFeedback 
+                                            ? index === currentQuestion.correct 
+                                                ? 'correct' 
+                                                : index === selectedAnswer 
+                                                ? 'incorrect' 
+                                                : ''
+                                            : selectedAnswer === index 
+                                                ? 'selected' 
+                                                : ''
                                         }`}
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${showFeedback
                                                     ? index === currentQuestion.correct
-                                                        ? 'bg-green-500'
+                                                        ? 'bg-green-100 text-green-700'
                                                         : index === selectedAnswer
-                                                        ? 'bg-red-500'
-                                                        : 'bg-white/10'
-                                                    : 'bg-white/10'
+                                                        ? 'bg-red-100 text-red-700'
+                                                        : 'bg-gray-100 text-gray-700'
+                                                    : selectedAnswer === index
+                                                        ? 'bg-blue-100 text-blue-700'
+                                                        : 'bg-gray-100 text-gray-700'
                                                 }`}>
-                                                    <span className="font-bold text-white">{String.fromCharCode(65 + index)}</span>
+                                                    <span className="font-bold">{String.fromCharCode(65 + index)}</span>
                                                 </div>
-                                                <span className="text-white">{option}</span>
+                                                <span className="font-medium text-gray-900">{option}</span>
                                             </div>
                                             {showFeedback && index === currentQuestion.correct && (
-                                                <span className="text-green-400">✅</span>
+                                                <span className="text-green-600 text-xl">✓</span>
                                             )}
                                             {showFeedback && index === selectedAnswer && index !== currentQuestion.correct && (
-                                                <span className="text-red-400">❌</span>
+                                                <span className="text-red-600 text-xl">✗</span>
                                             )}
                                         </div>
-                                    </button>
+                                    </div>
                                 ))}
                             </div>
                         </div>
 
                         {showFeedback && (
-                            <div className="glass-card p-6 mb-6">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className={`text-3xl ${selectedAnswer === currentQuestion.correct ? 'text-green-400' : 'text-red-400'}`}>
+                            <div className="card">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className={`text-3xl ${selectedAnswer === currentQuestion.correct ? 'text-green-600' : 'text-red-600'}`}>
                                         {selectedAnswer === currentQuestion.correct ? '🎉' : '📝'}
                                     </div>
                                     <div>
-                                        <h3 className={`text-lg font-semibold mb-2 ${selectedAnswer === currentQuestion.correct ? 'text-green-400' : 'text-red-400'}`}>
-                                            {selectedAnswer === currentQuestion.correct ? 'Correct!' : 'Not quite'}
+                                        <h3 className={`text-lg font-semibold mb-2 ${selectedAnswer === currentQuestion.correct ? 'text-green-700' : 'text-red-700'}`}>
+                                            {selectedAnswer === currentQuestion.correct ? 'Correct Answer!' : 'Not Quite Right'}
                                         </h3>
-                                        <p className="text-[#94a3b8]">{currentQuestion.explanation}</p>
+                                        <p className="text-gray-700">{currentQuestion.explanation}</p>
+                                        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                                            <p className="text-sm text-blue-700">
+                                                <span className="font-semibold">Time Bonus:</span> +{Math.max(5, Math.floor(timeLeft / 3))} XP
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                                 <button 
                                     onClick={handleNext}
                                     className="btn-primary w-full"
                                 >
-                                    {currentQuestionIndex < filteredQuizzes.length - 1 ? 'Next Question →' : 'Finish Quiz'}
+                                    {currentQuestionIndex < filteredQuizzes.length - 1 ? (
+                                        <>
+                                            Next Question
+                                            <i className="fas fa-arrow-right"></i>
+                                        </>
+                                    ) : (
+                                        'Finish Quiz'
+                                    )}
                                 </button>
                             </div>
                         )}
@@ -898,58 +1095,86 @@
         // Progress View Component
         function ProgressView({ userProgress, courseData }) {
             const completionPercentage = (userProgress.completedTopics.length / courseData.topics.length) * 100;
+            const masteredCards = Object.values(userProgress.flashcardProgress).filter(p => p.mastery === 'mastered').length;
             
             return (
-                <div className="max-w-4xl mx-auto fade-in">
-                    <div className="glass-card p-6 mb-6">
-                        <h2 className="text-2xl font-bold text-white mb-6">Your Progress</h2>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div className="glass-card p-6 text-center">
-                                <div className="text-3xl font-bold text-white mb-2">{userProgress.level}</div>
-                                <p className="text-sm text-[#94a3b8]">Current Level</p>
-                                <div className="progress-bar mt-4">
-                                    <div className="progress-fill" style={{ width: `${(userProgress.totalXP % 250) / 250 * 100}%` }}></div>
+                <div className="fade-in">
+                    <div className="card mb-6">
+                        <div className="section-header">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">Learning Progress</h2>
+                                <p className="text-gray-600">Track your achievements and growth</p>
+                            </div>
+                            <button className="btn-outline">
+                                <i className="fas fa-download"></i>
+                                Export Report
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                            <div className="card stat-card">
+                                <div className="stat-number">{userProgress.level}</div>
+                                <div className="stat-label">Current Level</div>
+                                <div className="progress-container mt-4">
+                                    <div className="progress-bar" style={{ width: `${(userProgress.totalXP % 200) / 200 * 100}%` }}></div>
                                 </div>
-                                <p className="text-xs text-[#94a3b8] mt-2">{userProgress.totalXP % 250}/250 XP to next level</p>
+                                <p className="text-xs text-gray-500 mt-2">{userProgress.totalXP % 200}/200 XP to next level</p>
                             </div>
                             
-                            <div className="glass-card p-6 text-center">
-                                <div className="text-3xl font-bold text-white mb-2">{userProgress.streak}</div>
-                                <p className="text-sm text-[#94a3b8]">Day Streak</p>
+                            <div className="card stat-card">
+                                <div className="stat-number">{userProgress.streak}</div>
+                                <div className="stat-label">Day Streak</div>
                                 <div className="mt-4">
-                                    <span className="badge badge-warning">🔥 Active</span>
+                                    <span className="badge badge-warning">
+                                        <i className="fas fa-fire"></i>
+                                        Active
+                                    </span>
                                 </div>
                             </div>
                             
-                            <div className="glass-card p-6 text-center">
-                                <div className="text-3xl font-bold text-white mb-2">{userProgress.totalXP}</div>
-                                <p className="text-sm text-[#94a3b8]">Total XP</p>
+                            <div className="card stat-card">
+                                <div className="stat-number">{userProgress.totalXP}</div>
+                                <div className="stat-label">Total XP</div>
                                 <div className="mt-4">
-                                    <span className="badge badge-success">✨ Earning</span>
+                                    <span className="badge badge-success">
+                                        <i className="fas fa-star"></i>
+                                        Earning
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div className="card stat-card">
+                                <div className="stat-number">{masteredCards}/{courseData.flashcards.length}</div>
+                                <div className="stat-label">Cards Mastered</div>
+                                <div className="progress-container mt-4">
+                                    <div className="progress-bar" style={{ width: `${(masteredCards / courseData.flashcards.length) * 100}%` }}></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="glass-card p-6 mb-6">
-                            <h3 className="text-lg font-semibold text-white mb-4">Course Completion</h3>
-                            <div className="progress-bar">
-                                <div className="progress-fill" style={{ width: `${completionPercentage}%` }}></div>
+                        <div className="card mb-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Completion</h3>
+                            <div className="progress-container mb-4">
+                                <div className="progress-bar" style={{ width: `${completionPercentage}%` }}></div>
                             </div>
-                            <div className="flex justify-between mt-2">
-                                <span className="text-sm text-[#94a3b8]">{completionPercentage.toFixed(0)}% complete</span>
-                                <span className="text-sm text-[#94a3b8]">{userProgress.completedTopics.length}/{courseData.topics.length} topics</span>
+                            <div className="flex justify-between text-sm text-gray-600">
+                                <span>{userProgress.completedTopics.length}/{courseData.topics.length} Topics Completed</span>
+                                <span>{completionPercentage.toFixed(0)}%</span>
                             </div>
                         </div>
 
-                        <div className="glass-card p-6">
-                            <h3 className="text-lg font-semibold text-white mb-4">Achievements</h3>
+                        <div className="card">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievements & Badges</h3>
                             <div className="flex flex-wrap gap-3">
                                 {userProgress.badges.map((badge, index) => (
                                     <div key={index} className="badge badge-primary">
-                                        🏆 {badge}
+                                        <i className="fas fa-trophy"></i>
+                                        {badge}
                                     </div>
                                 ))}
+                                {userProgress.badges.length === 0 && (
+                                    <p className="text-gray-500">Complete activities to earn badges!</p>
+                                )}
                             </div>
                         </div>
                     </div>
