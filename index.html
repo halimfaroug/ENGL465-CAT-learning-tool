@@ -1,1646 +1,1559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CATalyst - Complete Computer-Assisted Translation Learning Platform">
-    <title>CATalyst - Complete CAT Learning Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --color-primary: #667eea;
-            --color-secondary: #764ba2;
-            --color-success: #48bb78;
-            --color-warning: #ed8936;
-            --color-danger: #f56565;
-            --color-bg-dark: #0a0a2a;
-            --color-bg-light: #1a1a4a;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Open Sans', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-light) 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            color: #e2e8f0;
-        }
-        
-        /* Galaxy Background */
-        .galaxy-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle linear infinite;
-            will-change: opacity;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, rgba(102,126,234,0.8) 0%, rgba(102,126,234,0) 70%);
-            border-radius: 50%;
-            animation: float linear infinite;
-            will-change: transform;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) translateX(0); }
-            100% { transform: translateY(-100vh) translateX(100px); }
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #e2e8f0;
-        }
-        
-        /* Components */
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-            border-color: var(--color-primary);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            background-color: rgba(226, 232, 240, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            height: 10px;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        /* Flashcard */
-        .flashcard-container {
-            perspective: 1000px;
-            height: 300px;
-            margin: 20px auto;
-        }
-        
-        .flashcard {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-        
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-        
-        .flashcard-front, .flashcard-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .flashcard-front {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            color: white;
-        }
-        
-        .flashcard-back {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            transform: rotateY(180deg);
-        }
-        
-        /* Quiz */
-        .quiz-option {
-            padding: 15px;
-            border: 2px solid rgba(226, 232, 240, 0.2);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .quiz-option:hover {
-            border-color: var(--color-primary);
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        .quiz-option.selected {
-            border-color: var(--color-success);
-            background: rgba(72, 187, 120, 0.1);
-        }
-        
-        .quiz-option.correct {
-            border-color: var(--color-success);
-            background: rgba(72, 187, 120, 0.2);
-        }
-        
-        .quiz-option.incorrect {
-            border-color: var(--color-danger);
-            background: rgba(245, 101, 101, 0.2);
-        }
-        
-        /* Navigation Items */
-        .nav-item {
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 500;
-            color: #cbd5e0;
-            transition: all 0.3s;
-            cursor: pointer;
-            background: none;
-            border: none;
-            text-align: left;
-        }
-        
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .nav-item:hover:not(.active) {
-            background-color: rgba(102, 126, 234, 0.1);
-            color: white;
-        }
-        
-        /* Mind Map */
-        .mindmap-container {
-            width: 100%;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .mindmap-node {
-            position: absolute;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            min-width: 150px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-            z-index: 2;
-        }
-        
-        .mindmap-node:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease;
-        }
-        
-        /* Accessibility */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-        
-        .focus-visible:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .flashcard-container {
-                height: 250px;
-            }
-            
-            .mindmap-container {
-                height: 400px;
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CATalyst - Complete Computer-Assisted Translation Learning Platform">
+<title>CATalyst - Complete CAT Learning Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+--color-primary: #667eea;
+--color-secondary: #764ba2;
+--color-success: #48bb78;
+--color-warning: #ed8936;
+--color-danger: #f56565;
+--color-bg-dark: #0a0a2a;
+--color-bg-light: #1a1a4a;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Open Sans', sans-serif;
+}
+body {
+background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-light) 100%);
+min-height: 100vh;
+overflow-x: hidden;
+position: relative;
+color: #e2e8f0;
+}
+/* Galaxy Background */
+.galaxy-bg {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+overflow: hidden;
+pointer-events: none;
+}
+.star {
+position: absolute;
+background-color: white;
+border-radius: 50%;
+animation: twinkle linear infinite;
+will-change: opacity;
+}
+@keyframes twinkle {
+0%, 100% { opacity: 0.3; }
+50% { opacity: 1; }
+}
+.particle {
+position: absolute;
+background: radial-gradient(circle, rgba(102,126,234,0.8) 0%, rgba(102,126,234,0) 70%);
+border-radius: 50%;
+animation: float linear infinite;
+will-change: transform;
+}
+@keyframes float {
+0% { transform: translateY(0) translateX(0); }
+100% { transform: translateY(-100vh) translateX(100px); }
+}
+/* Typography */
+h1, h2, h3, h4, h5 {
+font-family: 'Poppins', sans-serif;
+font-weight: 600;
+color: #e2e8f0;
+}
+/* Components */
+.card {
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+border-radius: 15px;
+border: 1px solid rgba(255, 255, 255, 0.2);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+transition: all 0.3s ease;
+}
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+border-color: var(--color-primary);
+background: rgba(255, 255, 255, 0.15);
+}
+.btn {
+padding: 12px 24px;
+border-radius: 10px;
+font-weight: 600;
+border: none;
+cursor: pointer;
+transition: all 0.3s;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.btn-primary {
+background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+color: white;
+box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+.btn-secondary {
+background: rgba(255, 255, 255, 0.1);
+color: #e2e8f0;
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-secondary:hover {
+background: rgba(255, 255, 255, 0.15);
+border-color: rgba(255, 255, 255, 0.3);
+}
+/* Progress Bar */
+.progress-container {
+width: 100%;
+background-color: rgba(226, 232, 240, 0.2);
+border-radius: 10px;
+overflow: hidden;
+height: 10px;
+}
+.progress-bar {
+height: 100%;
+background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+border-radius: 10px;
+transition: width 0.5s ease;
+}
+/* Flashcard */
+.flashcard-container {
+perspective: 1000px;
+height: 300px;
+margin: 20px auto;
+}
+.flashcard {
+position: relative;
+width: 100%;
+height: 100%;
+transform-style: preserve-3d;
+transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+cursor: pointer;
+}
+.flashcard.flipped {
+transform: rotateY(180deg);
+}
+.flashcard-front, .flashcard-back {
+position: absolute;
+width: 100%;
+height: 100%;
+backface-visibility: hidden;
+border-radius: 15px;
+padding: 30px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.flashcard-front {
+background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+color: white;
+}
+.flashcard-back {
+background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+color: white;
+transform: rotateY(180deg);
+}
+/* Quiz */
+.quiz-option {
+padding: 15px;
+border: 2px solid rgba(226, 232, 240, 0.2);
+border-radius: 10px;
+margin-bottom: 10px;
+cursor: pointer;
+transition: all 0.3s;
+background: rgba(255, 255, 255, 0.05);
+}
+.quiz-option:hover {
+border-color: var(--color-primary);
+background: rgba(102, 126, 234, 0.1);
+}
+.quiz-option.selected {
+border-color: var(--color-success);
+background: rgba(72, 187, 120, 0.1);
+}
+.quiz-option.correct {
+border-color: var(--color-success);
+background: rgba(72, 187, 120, 0.2);
+}
+.quiz-option.incorrect {
+border-color: var(--color-danger);
+background: rgba(245, 101, 101, 0.2);
+}
+/* Navigation Items */
+.nav-item {
+padding: 12px 20px;
+border-radius: 10px;
+font-weight: 500;
+color: #cbd5e0;
+transition: all 0.3s;
+cursor: pointer;
+background: none;
+border: none;
+text-align: left;
+}
+.nav-item.active {
+background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+color: white;
+box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+.nav-item:hover:not(.active) {
+background-color: rgba(102, 126, 234, 0.1);
+color: white;
+}
+/* Mind Map */
+.mindmap-container {
+width: 100%;
+height: 500px;
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(10px);
+border-radius: 15px;
+position: relative;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.mindmap-node {
+position: absolute;
+background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+border-radius: 10px;
+padding: 15px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+border: 2px solid rgba(255, 255, 255, 0.2);
+min-width: 150px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s;
+color: white;
+z-index: 2;
+}
+.mindmap-node:hover {
+transform: scale(1.05);
+box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+/* Animations */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+animation: fadeIn 0.5s ease;
+}
+/* Accessibility */
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+.focus-visible:focus-visible {
+outline: 2px solid var(--color-primary);
+outline-offset: 2px;
+}
+/* Responsive */
+@media (max-width: 768px) {
+.flashcard-container {
+height: 250px;
+}
+.mindmap-container {
+height: 400px;
+}
+}
+@media (prefers-reduced-motion: reduce) {
+* {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+}
+}
+</style>
 </head>
 <body class="antialiased">
-    <!-- Galaxy Background -->
-    <div class="galaxy-bg" id="galaxy" aria-hidden="true"></div>
-    
-    <!-- Skip to main content -->
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:p-4 focus:rounded">
-        Skip to main content
-    </a>
-    
-    <div id="app" class="min-h-screen">
-        <!-- Navigation -->
-        <nav class="bg-gray-900/80 backdrop-blur-lg shadow-lg border-b border-gray-800">
-            <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center h-20">
-                    <!-- Logo -->
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
-                             aria-hidden="true">
-                            <i class="fas fa-language text-white text-lg"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold text-white">CATalyst</h1>
-                            <p class="text-sm text-gray-400">Computer-Assisted Translation Learning</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Desktop Navigation -->
-                    <div class="hidden md:flex space-x-1" role="navigation" aria-label="Main">
-                        <button class="nav-item active focus-visible" data-section="dashboard" aria-current="page">
-                            <i class="fas fa-home mr-2" aria-hidden="true"></i>Dashboard
-                        </button>
-                        <button class="nav-item focus-visible" data-section="flashcards">
-                            <i class="fas fa-layer-group mr-2" aria-hidden="true"></i>Flashcards
-                        </button>
-                        <button class="nav-item focus-visible" data-section="quiz">
-                            <i class="fas fa-question-circle mr-2" aria-hidden="true"></i>Quiz
-                        </button>
-                        <button class="nav-item focus-visible" data-section="mindmaps">
-                            <i class="fas fa-project-diagram mr-2" aria-hidden="true"></i>Mind Maps
-                        </button>
-                        <button class="nav-item focus-visible" data-section="progress">
-                            <i class="fas fa-chart-line mr-2" aria-hidden="true"></i>Progress
-                        </button>
-                    </div>
-                    
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-gray-300 hover:text-white focus-visible"
-                            aria-label="Toggle menu" aria-expanded="false">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                    
-                    <!-- User Profile -->
-                    <div class="hidden md:flex items-center space-x-4">
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-300">CATalyst Platform</p>
-                            <p class="text-xs text-gray-500">Advanced Learning System</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
-                             aria-label="User profile">
-                            <span class="text-white font-bold">C</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Mobile Navigation -->
-                <div id="mobile-menu" class="md:hidden hidden py-4 border-t border-gray-800">
-                    <div class="flex flex-col space-y-2">
-                        <button class="nav-item active focus-visible" data-section="dashboard" aria-current="page">
-                            <i class="fas fa-home mr-2" aria-hidden="true"></i>Dashboard
-                        </button>
-                        <button class="nav-item focus-visible" data-section="flashcards">
-                            <i class="fas fa-layer-group mr-2" aria-hidden="true"></i>Flashcards
-                        </button>
-                        <button class="nav-item focus-visible" data-section="quiz">
-                            <i class="fas fa-question-circle mr-2" aria-hidden="true"></i>Quiz
-                        </button>
-                        <button class="nav-item focus-visible" data-section="mindmaps">
-                            <i class="fas fa-project-diagram mr-2" aria-hidden="true"></i>Mind Maps
-                        </button>
-                        <button class="nav-item focus-visible" data-section="progress">
-                            <i class="fas fa-chart-line mr-2" aria-hidden="true"></i>Progress
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
+<!-- Galaxy Background -->
+<div class="galaxy-bg" id="galaxy" aria-hidden="true"></div>
+<!-- Skip to main content -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:p-4 focus:rounded">
+Skip to main content
+</a>
+<div id="app" class="min-h-screen">
+<!-- Navigation -->
+<nav class="bg-gray-900/80 backdrop-blur-lg shadow-lg border-b border-gray-800">
+<div class="container mx-auto px-4">
+<div class="flex justify-between items-center h-20">
+<!-- Logo -->
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+aria-hidden="true">
+<i class="fas fa-language text-white text-lg"></i>
+</div>
+<div>
+<h1 class="text-xl font-bold text-white">CATalyst</h1>
+<p class="text-sm text-gray-400">Computer-Assisted Translation Learning</p>
+</div>
+</div>
+<!-- Desktop Navigation -->
+<div class="hidden md:flex space-x-1" role="navigation" aria-label="Main">
+<button class="nav-item active focus-visible" data-section="dashboard" aria-current="page">
+<i class="fas fa-home mr-2" aria-hidden="true"></i>Dashboard
+</button>
+<button class="nav-item focus-visible" data-section="flashcards">
+<i class="fas fa-layer-group mr-2" aria-hidden="true"></i>Flashcards
+</button>
+<button class="nav-item focus-visible" data-section="quiz">
+<i class="fas fa-question-circle mr-2" aria-hidden="true"></i>Quiz
+</button>
+<button class="nav-item focus-visible" data-section="mindmaps">
+<i class="fas fa-project-diagram mr-2" aria-hidden="true"></i>Mind Maps
+</button>
+<button class="nav-item focus-visible" data-section="progress">
+<i class="fas fa-chart-line mr-2" aria-hidden="true"></i>Progress
+</button>
+</div>
+<!-- Mobile Menu Button -->
+<button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-gray-300 hover:text-white focus-visible"
+aria-label="Toggle menu" aria-expanded="false">
+<i class="fas fa-bars text-xl"></i>
+</button>
+<!-- User Profile -->
+<div class="hidden md:flex items-center space-x-4">
+<div class="text-right">
+<p class="text-sm font-medium text-gray-300">CATalyst Platform</p>
+<p class="text-xs text-gray-500">Advanced Learning System</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+aria-label="User profile">
+<span class="text-white font-bold">C</span>
+</div>
+</div>
+</div>
+<!-- Mobile Navigation -->
+<div id="mobile-menu" class="md:hidden hidden py-4 border-t border-gray-800">
+<div class="flex flex-col space-y-2">
+<button class="nav-item active focus-visible" data-section="dashboard" aria-current="page">
+<i class="fas fa-home mr-2" aria-hidden="true"></i>Dashboard
+</button>
+<button class="nav-item focus-visible" data-section="flashcards">
+<i class="fas fa-layer-group mr-2" aria-hidden="true"></i>Flashcards
+</button>
+<button class="nav-item focus-visible" data-section="quiz">
+<i class="fas fa-question-circle mr-2" aria-hidden="true"></i>Quiz
+</button>
+<button class="nav-item focus-visible" data-section="mindmaps">
+<i class="fas fa-project-diagram mr-2" aria-hidden="true"></i>Mind Maps
+</button>
+<button class="nav-item focus-visible" data-section="progress">
+<i class="fas fa-chart-line mr-2" aria-hidden="true"></i>Progress
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main id="main-content" class="container mx-auto px-4 py-8">
+<!-- Dashboard Section -->
+<section id="dashboard-section" class="space-y-8 fade-in">
+<div class="text-center mb-8">
+<h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+Welcome to CATalyst
+</h1>
+<p class="text-lg text-gray-300 max-w-3xl mx-auto">
+An advanced learning platform for Computer-Assisted Translation. Accelerate your understanding with interactive tools and visual learning.
+</p>
+</div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="card p-6" role="region" aria-label="Topics overview">
+<div class="text-3xl font-bold text-blue-400 mb-2" id="topics-count">14</div>
+<div class="text-gray-300 font-medium">Topics</div>
+<p class="text-gray-400 text-sm mt-2">Complete coverage</p>
+</div>
+<div class="card p-6" role="region" aria-label="Flashcards overview">
+<div class="text-3xl font-bold text-purple-400 mb-2" id="flashcards-count">100</div>
+<div class="text-gray-300 font-medium">Flashcards</div>
+<p class="text-gray-400 text-sm mt-2">Key concepts</p>
+</div>
+<div class="card p-6" role="region" aria-label="Quiz overview">
+<div class="text-3xl font-bold text-green-400 mb-2" id="quiz-count">50</div>
+<div class="text-gray-300 font-medium">Quiz Questions</div>
+<p class="text-gray-400 text-sm mt-2">Test your knowledge</p>
+</div>
+<div class="card p-6" role="region" aria-label="Mind maps overview">
+<div class="text-3xl font-bold text-yellow-400 mb-2" id="mindmaps-count">8</div>
+<div class="text-gray-300 font-medium">Mind Maps</div>
+<p class="text-gray-400 text-sm mt-2">Visual learning</p>
+</div>
+</div>
+<!-- Course Topics -->
+<div class="card p-6">
+<h2 class="text-2xl font-bold mb-6 text-white">Course Topics</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="list" aria-label="Course topics">
+<!-- Topics will be dynamically loaded -->
+</div>
+</div>
+</section>
+<!-- Flashcards Section -->
+<section id="flashcards-section" class="hidden section-transition fade-in" role="region" aria-label="Flashcards learning">
+<div class="card p-6 mb-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+<div>
+<h2 class="text-2xl font-bold text-white">Flashcards Learning</h2>
+<p class="text-gray-300">Click cards to flip and learn</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<select id="topic-select" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterFlashcards()">
+<option value="all">All Topics</option>
+<option value="1">1. Introduction to CAT</option>
+<option value="2">2. Translator's Workstation</option>
+<option value="3">3. Translation Memory</option>
+<option value="4">4. Terminology Tools</option>
+<option value="5">5. Why Translation is Difficult</option>
+<option value="6">6. Commercial MT Systems</option>
+<option value="7">7. Post-Editing</option>
+<option value="8">8. Localization & Translation</option>
+<option value="9">9. Corpora & Translation</option>
+<option value="10">10. Evaluating MT</option>
+<option value="11">11. Linguistics for MT</option>
+<option value="12">12. Sublanguage</option>
+<option value="13">13. MT for Minority Languages</option>
+<option value="14">14. MT in the Classroom</option>
+</select>
+<button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
+<i class="fas fa-arrow-left mr-2"></i>Back
+</button>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mb-6">
+<div class="flex justify-between text-sm text-gray-300 mb-2">
+<span>Progress</span>
+<span id="card-progress">1/100</span>
+</div>
+<div class="progress-container">
+<div id="progress-bar" class="progress-bar" style="width: 1%"></div>
+</div>
+</div>
+<!-- Flashcard -->
+<div class="flashcard-container">
+<div id="flashcard" class="flashcard" onclick="flipCard()">
+<div class="flashcard-front">
+<div class="text-center">
+<div class="text-sm font-semibold mb-4">QUESTION</div>
+<h3 id="card-front" class="text-2xl font-bold mb-6">What is Computer-Assisted Translation (CAT)?</h3>
+<p class="text-sm opacity-80">Click to flip the card</p>
+<div class="mt-4">
+<span id="card-topic" class="px-3 py-1 bg-white/20 rounded-full text-xs">Topic 1</span>
+</div>
+</div>
+</div>
+<div class="flashcard-back">
+<div class="text-center">
+<div class="text-sm font-semibold mb-4">ANSWER</div>
+<p id="card-back" class="text-xl mb-6">CAT refers to the use of computer software to assist human translators in the translation process, improving efficiency and consistency through tools like translation memory and terminology management.</p>
+<p class="text-sm opacity-80">Click to flip back</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Navigation -->
+<div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
+<button onclick="prevCard()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-gray-600">
+<i class="fas fa-arrow-left mr-2"></i>Previous
+</button>
+<div class="flex flex-col md:flex-row gap-2">
+<button onclick="markAsLearned()" class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
+<i class="fas fa-check mr-2"></i>Mark as Learned
+</button>
+<button onclick="showDifficulty()" class="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500">
+<i class="fas fa-star mr-2"></i>Rate Difficulty
+</button>
+</div>
+<button onclick="nextCard()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-gray-600">
+Next<i class="fas fa-arrow-right ml-2"></i>
+</button>
+</div>
+<!-- Difficulty Rating -->
+<div id="difficulty-rating" class="hidden mt-6 bg-gray-800/50 p-4 rounded-lg">
+<h4 class="font-bold mb-3 text-white">How difficult was this card?</h4>
+<div class="flex flex-col md:flex-row gap-3">
+<button onclick="rateDifficulty(1)" class="flex-1 py-3 bg-green-900/30 text-green-400 rounded-lg font-medium hover:bg-green-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
+Easy
+</button>
+<button onclick="rateDifficulty(2)" class="flex-1 py-3 bg-blue-900/30 text-blue-400 rounded-lg font-medium hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+Medium
+</button>
+<button onclick="rateDifficulty(3)" class="flex-1 py-3 bg-red-900/30 text-red-400 rounded-lg font-medium hover:bg-red-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
+Hard
+</button>
+</div>
+</div>
+</div>
+<!-- All Flashcards List -->
+<div class="card p-6">
+<h3 class="font-bold text-lg mb-4 text-white">All Flashcards</h3>
+<div id="flashcards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-2">
+<!-- Flashcards will be dynamically loaded here -->
+</div>
+</div>
+</section>
+<!-- Quiz Section -->
+<section id="quiz-section" class="hidden section-transition fade-in" role="region" aria-label="Quiz">
+<div class="card p-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+<div>
+<h2 class="text-2xl font-bold text-white">Quiz Time</h2>
+<p class="text-gray-300">Test your knowledge with 50 questions</p>
+</div>
+<div>
+<button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
+<i class="fas fa-arrow-left mr-2"></i>Back
+</button>
+</div>
+</div>
+<!-- Quiz Progress -->
+<div class="mb-6">
+<div class="flex justify-between text-sm text-gray-300 mb-2">
+<span id="quiz-progress">Question 1/50</span>
+<span id="quiz-score">Score: 0</span>
+</div>
+<div class="progress-container">
+<div id="quiz-progress-bar" class="progress-bar" style="width: 2%"></div>
+</div>
+</div>
+<!-- Quiz Question -->
+<div class="mb-8">
+<h3 id="quiz-question" class="text-xl font-bold mb-6 text-white">What was the main conclusion of the 1966 ALPAC Report?</h3>
+<div id="quiz-options">
+<!-- Options will be loaded here -->
+</div>
+</div>
+<!-- Quiz Navigation -->
+<div class="flex flex-col md:flex-row justify-between gap-4">
+<button id="prev-question-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-600" disabled>
+<i class="fas fa-arrow-left mr-2"></i>Previous
+</button>
+<button id="next-question-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500">
+Next Question<i class="fas fa-arrow-right ml-2"></i>
+</button>
+</div>
+<!-- Quiz Results -->
+<div id="quiz-results" class="hidden mt-8 bg-gradient-to-r from-green-500 to-blue-600 p-6 rounded-xl text-white">
+<div class="text-center">
+<i class="fas fa-trophy text-4xl mb-4"></i>
+<h3 class="text-2xl font-bold mb-2">Quiz Complete!</h3>
+<p id="final-score" class="text-3xl font-bold mb-4">Score: 45/50 (90%)</p>
+<div class="flex flex-col md:flex-row justify-center gap-4">
+<button onclick="restartQuiz()" class="px-6 py-3 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
+Restart Quiz
+</button>
+<button onclick="showSection('dashboard')" class="px-6 py-3 bg-white/20 text-white rounded-lg font-bold hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50">
+Return to Dashboard
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Mind Maps Section -->
+<section id="mindmaps-section" class="hidden section-transition fade-in" role="region" aria-label="Mind maps">
+<div class="card p-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+<div>
+<h2 class="text-2xl font-bold text-white">Mind Maps</h2>
+<p class="text-gray-300">Visualize connections between concepts</p>
+</div>
+<div>
+<button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
+<i class="fas fa-arrow-left mr-2"></i>Back
+</button>
+</div>
+</div>
+<!-- Mind Map Selector -->
+<div class="mb-6">
+<select id="mindmap-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="loadMindMap()">
+<option value="1">1. Introduction to CAT - Complete Overview</option>
+<option value="2">2. Translator's Workstation - Tools & Components</option>
+<option value="3">3. Translation Memory Systems - Architecture</option>
+<option value="4">4. Terminology Management - Workflow</option>
+<option value="5">5. Localization Process - Complete Workflow</option>
+<option value="6">6. MT Evaluation Methods - Approaches & Metrics</option>
+<option value="7">7. CAT vs MT - Comparison Map</option>
+<option value="8">8. Translation Technologies Timeline</option>
+</select>
+</div>
+<!-- Mind Map Container -->
+<div class="mindmap-container" id="mindmap-canvas">
+<!-- Mind map will be drawn here -->
+</div>
+<!-- Mind Map Description -->
+<div class="mt-6 bg-gray-800/50 p-4 rounded-lg">
+<h4 id="mindmap-title" class="font-bold text-lg mb-2 text-white">Introduction to CAT - Complete Overview</h4>
+<p id="mindmap-description" class="text-gray-300">
+This mind map shows the main components and concepts of Computer-Assisted Translation. Click on nodes to see more details about each concept.
+</p>
+</div>
+</div>
+</section>
+<!-- Progress Section -->
+<section id="progress-section" class="hidden section-transition fade-in" role="region" aria-label="Learning progress">
+<div class="card p-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+<div>
+<h2 class="text-2xl font-bold text-white">Learning Progress</h2>
+<p class="text-gray-300">Track your achievements and growth</p>
+</div>
+<div>
+<button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
+<i class="fas fa-arrow-left mr-2"></i>Back
+</button>
+</div>
+</div>
+<!-- Overall Progress -->
+<div class="mb-8">
+<h3 class="font-bold text-lg mb-4 text-white">Overall Progress</h3>
+<div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 rounded-xl">
+<div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+<div>
+<div class="text-3xl font-bold text-blue-400">28%</div>
+<div class="text-gray-300">Course Completion</div>
+</div>
+<div class="text-right">
+<div class="text-lg font-bold text-white">Level 2</div>
+<div class="text-gray-300">Student</div>
+</div>
+</div>
+<div class="progress-container">
+<div class="progress-bar" style="width: 28%"></div>
+</div>
+</div>
+</div>
+<!-- Topic Progress -->
+<div class="mb-8">
+<h3 class="font-bold text-lg mb-4 text-white">Topic Progress</h3>
+<div id="topic-progress-list" class="space-y-4">
+<!-- Progress bars for each topic will be loaded here -->
+</div>
+</div>
+<!-- Achievements -->
+<div>
+<h3 class="font-bold text-lg mb-4 text-white">Achievements</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-yellow-900/30 p-4 rounded-lg text-center border border-yellow-800/30">
+<i class="fas fa-graduation-cap text-yellow-400 text-2xl mb-2"></i>
+<div class="font-bold text-white">First Steps</div>
+<div class="text-sm text-gray-400">Complete Topic 1</div>
+</div>
+<div class="bg-blue-900/30 p-4 rounded-lg text-center border border-blue-800/30">
+<i class="fas fa-brain text-blue-400 text-2xl mb-2"></i>
+<div class="font-bold text-white">Quick Learner</div>
+<div class="text-sm text-gray-400">10 flashcards in a row</div>
+</div>
+<div class="bg-green-900/30 p-4 rounded-lg text-center border border-green-800/30">
+<i class="fas fa-trophy text-green-400 text-2xl mb-2"></i>
+<div class="font-bold text-white">Quiz Master</div>
+<div class="text-sm text-gray-400">Score 80%+ on quiz</div>
+</div>
+<div class="bg-purple-900/30 p-4 rounded-lg text-center border border-purple-800/30">
+<i class="fas fa-calendar-alt text-purple-400 text-2xl mb-2"></i>
+<div class="font-bold text-white">Consistent</div>
+<div class="text-sm text-gray-400">3 days in a row</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-900/80 backdrop-blur-lg py-8 mt-12 border-t border-gray-800">
+<div class="container mx-auto px-4 text-center">
+<p class="text-lg mb-2 text-white">CATalyst - Computer-Assisted Translation Learning Platform</p>
+<p class="text-gray-400 mb-4">Accelerating translation technology education through interactive learning</p>
+<p class="text-sm text-gray-500">Developed by Ms. Halim Faroug A. Elhag | Lecturer of English Language, UHB/University of Khartoum | © <span id="current-year"></span> All rights reserved</p>
+</div>
+</footer>
+</div>
+<script>
+// Application State
+let currentSection = 'dashboard';
+let currentCardIndex = 0;
+let currentQuestionIndex = 0;
+let quizScore = 0;
+let selectedQuizAnswer = null;
+let currentTopic = 1;
+let learnedCards = new Set();
+let flashcardsData = [];
+let quizData = [];
+let mindMapsData = {};
 
-        <!-- Main Content -->
-        <main id="main-content" class="container mx-auto px-4 py-8">
-            <!-- Dashboard Section -->
-            <section id="dashboard-section" class="space-y-8 fade-in">
-                <div class="text-center mb-8">
-                    <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                        Welcome to CATalyst
-                    </h1>
-                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                        An advanced learning platform for Computer-Assisted Translation. Accelerate your understanding with interactive tools and visual learning.
-                    </p>
-                </div>
+// === FULL FLASHCARDS DATA (100 REAL ENTRIES) ===
+flashcardsData = [
+  // Topic 1: Introduction to CAT (15 cards)
+  { id: 1, topic: 1, front: "What is Computer-Assisted Translation (CAT)?", back: "Software tools that support human translators to improve efficiency, consistency, and quality through features like translation memory and terminology management." },
+  { id: 2, topic: 1, front: "What was the ALPAC Report (1966)?", back: "A report that concluded machine translation was slower, less accurate, and more expensive than human translation, leading to increased focus on CAT tools." },
+  { id: 3, topic: 1, front: "What is the difference between MT and CAT?", back: "MT aims for fully automatic translation, while CAT supports human translators who remain in control of the translation process." },
+  { id: 4, topic: 1, front: "What are the main components of CAT tools?", back: "1) Translation Memory 2) Terminology Management 3) Quality Assurance tools 4) Alignment tools 5) Project management features." },
+  { id: 5, topic: 1, front: "What is the 'sublanguage approach' in MT?", back: "Developing MT systems for restricted language domains with limited vocabulary and syntax, which improves translation quality." },
+  { id: 6, topic: 1, front: "What is Controlled Language?", back: "A simplified version of a natural language with restricted grammar and vocabulary used to improve MT quality." },
+  { id: 7, topic: 1, front: "What are the two main uses of MT?", back: "1) Assimilation: understanding foreign texts 2) Dissemination: producing translations for publication." },
+  { id: 8, topic: 1, front: "What is FAHQT?", back: "Fully Automatic High-Quality Translation - the original but unattained goal of MT research." },
+  { id: 9, topic: 1, front: "What is MAHT vs HAMT?", back: "Machine-Aided Human Translation (human-centered) vs Human-Aided Machine Translation (machine-centered)." },
+  { id: 10, topic: 1, front: "Who uses CAT tools?", back: "Professional translators, localization specialists, technical writers, translation agencies, and language service providers." },
+  { id: 11, topic: 1, front: "What is a translator workstation?", back: "An integrated computer environment providing all tools a translator needs: word processing, TM, terminology, dictionaries, and communication tools." },
+  { id: 12, topic: 1, front: "What were limitations of early MT?", back: "Primitive technology, underestimation of language complexity, lack of linguistic knowledge, and focus on word-for-word translation." },
+  { id: 13, topic: 1, front: "What is the Météo system?", back: "A successful MT system for weather reports between English and French, demonstrating the sublanguage approach." },
+  { id: 14, topic: 1, front: "What is Spoken Language Translation (SLT)?", back: "Combining speech recognition with machine translation, with real-time processing constraints." },
+  { id: 15, topic: 1, front: "What role does linguistics play in MT?", back: "Provides formal descriptions of language structure (syntax, semantics, pragmatics) that inform MT system design." },
 
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="card p-6" role="region" aria-label="Topics overview">
-                        <div class="text-3xl font-bold text-blue-400 mb-2" id="topics-count">14</div>
-                        <div class="text-gray-300 font-medium">Topics</div>
-                        <p class="text-gray-400 text-sm mt-2">Complete coverage</p>
-                    </div>
-                    <div class="card p-6" role="region" aria-label="Flashcards overview">
-                        <div class="text-3xl font-bold text-purple-400 mb-2" id="flashcards-count">100</div>
-                        <div class="text-gray-300 font-medium">Flashcards</div>
-                        <p class="text-gray-400 text-sm mt-2">Key concepts</p>
-                    </div>
-                    <div class="card p-6" role="region" aria-label="Quiz overview">
-                        <div class="text-3xl font-bold text-green-400 mb-2" id="quiz-count">50</div>
-                        <div class="text-gray-300 font-medium">Quiz Questions</div>
-                        <p class="text-gray-400 text-sm mt-2">Test your knowledge</p>
-                    </div>
-                    <div class="card p-6" role="region" aria-label="Mind maps overview">
-                        <div class="text-3xl font-bold text-yellow-400 mb-2" id="mindmaps-count">8</div>
-                        <div class="text-gray-300 font-medium">Mind Maps</div>
-                        <p class="text-gray-400 text-sm mt-2">Visual learning</p>
-                    </div>
-                </div>
+  // Topic 2: Translator's Workstation (12 cards)
+  { id: 16, topic: 2, front: "What tools are in a translator's workstation?", back: "Multilingual word processing, spell/grammar checkers, thesauri, online dictionaries, terminology management, and communication tools." },
+  { id: 17, topic: 2, front: "What is 'post-editing the source text'?", back: "Modifying the source text to make it easier for MT systems to translate, rather than editing the MT output." },
+  { id: 18, topic: 2, front: "What are advantages of dictation tools?", back: "Faster input than typing, reduces typing errors, allows natural expression, and reduces physical strain." },
+  { id: 19, topic: 2, front: "What is a bilingual concordance?", back: "A tool showing source text segments alongside their translations to see how words/phrases have been translated." },
+  { id: 20, topic: 2, front: "What is markup language (XML) in translation?", back: "Text encoding that separates content from formatting, making structured documents easier to translate." },
+  { id: 21, topic: 2, front: "What are limitations of commercial MT for professionals?", back: "Often designed for non-experts with simplified interfaces and limited control over parameters." },
+  { id: 22, topic: 2, front: "What is interactive translation?", back: "MT system that asks users to make choices during translation (word sense disambiguation, structural decisions)." },
+  { id: 23, topic: 2, front: "What are lexical resources?", back: "Online dictionaries, term banks, thesauri, encyclopedias, and specialized reference materials." },
+  { id: 24, topic: 2, front: "What is automatic terminology lookup?", back: "Feature that automatically identifies terms in source text and suggests translations from a terminology database." },
+  { id: 25, topic: 2, front: "How is desktop publishing integrated?", back: "Translators can work in formatted documents or use tools that separate content from formatting." },
+  { id: 26, topic: 2, front: "What is a translator-friendly word processor?", back: "Word processing software with enhanced features for translators like grammar-aware search/replace." },
+  { id: 27, topic: 2, front: "What are IT components in a workstation?", back: "Email, file transfer, version control, backup systems, and project management tools." },
 
-                <!-- Course Topics -->
-                <div class="card p-6">
-                    <h2 class="text-2xl font-bold mb-6 text-white">Course Topics</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="list" aria-label="Course topics">
-                        <!-- Topics will be dynamically loaded -->
-                    </div>
-                </div>
-            </section>
+  // Topic 3: Translation Memory (13 cards)
+  { id: 28, topic: 3, front: "What is Translation Memory (TM)?", back: "A database storing previously translated text segments with their source texts for reuse in new translations." },
+  { id: 29, topic: 3, front: "What are three methods for building a TM database?", back: "1) Building gradually during translation 2) Importing from other systems 3) Aligning existing translations." },
+  { id: 30, topic: 3, front: "What is alignment in TM?", back: "Matching source text segments with their corresponding translations to create translation units." },
+  { id: 31, topic: 3, front: "What is a fuzzy match?", back: "When a source segment is similar but not identical to a segment in the TM (typically 75-99% similarity)." },
+  { id: 32, topic: 3, front: "What is TMX?", back: "Translation Memory eXchange - an XML standard for exchanging TM data between different CAT tools." },
+  { id: 33, topic: 3, front: "What is Levenshtein distance?", back: "A string similarity metric measuring minimum edits needed to change one string into another." },
+  { id: 34, topic: 3, front: "What are challenges in automatic alignment?", back: "Sentence boundary identification, non-parallel sentence correspondence, and reordering of segments." },
+  { id: 35, topic: 3, front: "What is typical productivity gain from TM?", back: "Average 30% time savings, varying with text repetitiveness and TM database quality." },
+  { id: 36, topic: 3, front: "How does TM differ from EBMT?", back: "TM suggests matches to human translators; EBMT automatically creates translations from examples." },
+  { id: 37, topic: 3, front: "What is portion matching?", back: "TM systems that can match and suggest translation of text fragments smaller than complete sentences." },
+  { id: 38, topic: 3, front: "What affects TM matching accuracy?", back: "Text similarity, language pair characteristics, TM database size/quality, and matching algorithm." },
+  { id: 39, topic: 3, front: "What is a noisy parallel corpus?", back: "Bilingual text collection where translations are not literal or sentence-aligned." },
+  { id: 40, topic: 3, front: "Name commercial TM systems.", back: "Trados Translator's Workbench, Atril Déjà Vu, Star Transit, IBM Translation Manager." },
 
-            <!-- Flashcards Section -->
-            <section id="flashcards-section" class="hidden section-transition fade-in" role="region" aria-label="Flashcards learning">
-                <div class="card p-6 mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">Flashcards Learning</h2>
-                            <p class="text-gray-300">Click cards to flip and learn</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <select id="topic-select" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterFlashcards()">
-                                <option value="all">All Topics</option>
-                                <option value="1">1. Introduction to CAT</option>
-                                <option value="2">2. Translator's Workstation</option>
-                                <option value="3">3. Translation Memory</option>
-                                <option value="4">4. Terminology Tools</option>
-                                <option value="5">5. Why Translation is Difficult</option>
-                                <option value="6">6. Commercial MT Systems</option>
-                                <option value="7">7. Post-Editing</option>
-                                <option value="8">8. Localization & Translation</option>
-                                <option value="9">9. Corpora & Translation</option>
-                                <option value="10">10. Evaluating MT</option>
-                                <option value="11">11. Linguistics for MT</option>
-                                <option value="12">12. Sublanguage</option>
-                                <option value="13">13. MT for Minority Languages</option>
-                                <option value="14">14. MT in the Classroom</option>
-                            </select>
-                            <button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
-                                <i class="fas fa-arrow-left mr-2"></i>Back
-                            </button>
-                        </div>
-                    </div>
+  // Topic 4: Terminology Tools (8 cards)
+  { id: 41, topic: 4, front: "What is terminology management?", back: "Systematic collection, description, processing, and presentation of terms, especially specialized vocabulary." },
+  { id: 42, topic: 4, front: "What is a termbase?", back: "A structured database of terms with definitions, context, usage notes, and translations." },
+  { id: 43, topic: 4, front: "What is term extraction?", back: "Automated identification of candidate terms from monolingual or bilingual texts using linguistic/statistical methods." },
+  { id: 44, topic: 4, front: "Why is terminology consistency important?", back: "Ensures clarity, professionalism, and brand integrity, especially in technical or legal domains." },
+  { id: 45, topic: 4, front: "What is ISO 12616?", back: "An international standard for terminology work in translation." },
+  { id: 46, topic: 4, front: "How do CAT tools integrate terminology?", back: "Via real-time lookup, auto-suggest, and validation against approved termbases." },
+  { id: 47, topic: 4, front: "What is a concept-oriented approach?", back: "Organizing terms by concept rather than word form, linking equivalents across languages." },
+  { id: 48, topic: 4, front: "What file formats support terminology exchange?", back: "TBX (TermBase eXchange), CSV, XLSX, and proprietary formats like MultiTerm." },
 
-                    <!-- Progress Bar -->
-                    <div class="mb-6">
-                        <div class="flex justify-between text-sm text-gray-300 mb-2">
-                            <span>Progress</span>
-                            <span id="card-progress">1/100</span>
-                        </div>
-                        <div class="progress-container">
-                            <div id="progress-bar" class="progress-bar" style="width: 1%"></div>
-                        </div>
-                    </div>
+  // Topic 5: Why Translation is Difficult (7 cards)
+  { id: 49, topic: 5, front: "What is lexical ambiguity?", back: "When a word has multiple meanings (e.g., 'bank' as financial institution or river edge)." },
+  { id: 50, topic: 5, front: "What is structural ambiguity?", back: "When sentence syntax allows multiple interpretations (e.g., 'I saw the man with the telescope')." },
+  { id: 51, topic: 5, front: "Why is cultural context hard for MT?", back: "Idioms, humor, and references may not exist or differ in target cultures." },
+  { id: 52, topic: 5, front: "What is deixis?", back: "Words like 'here', 'now', 'I' that depend on context for meaning—challenging for MT." },
+  { id: 53, topic: 5, front: "What is pragmatic meaning?", back: "Meaning derived from speaker intention and context, not just literal words." },
+  { id: 54, topic: 5, front: "Why is word order problematic?", back: "Languages have different syntactic rules; direct reordering often fails." },
+  { id: 55, topic: 5, front: "What is non-compositionality?", back: "When phrase meaning isn’t sum of parts (e.g., 'kick the bucket' ≠ literal)." },
 
-                    <!-- Flashcard -->
-                    <div class="flashcard-container">
-                        <div id="flashcard" class="flashcard" onclick="flipCard()">
-                            <div class="flashcard-front">
-                                <div class="text-center">
-                                    <div class="text-sm font-semibold mb-4">QUESTION</div>
-                                    <h3 id="card-front" class="text-2xl font-bold mb-6">What is Computer-Assisted Translation (CAT)?</h3>
-                                    <p class="text-sm opacity-80">Click to flip the card</p>
-                                    <div class="mt-4">
-                                        <span id="card-topic" class="px-3 py-1 bg-white/20 rounded-full text-xs">Topic 1</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flashcard-back">
-                                <div class="text-center">
-                                    <div class="text-sm font-semibold mb-4">ANSWER</div>
-                                    <p id="card-back" class="text-xl mb-6">CAT refers to the use of computer software to assist human translators in the translation process, improving efficiency and consistency through tools like translation memory and terminology management.</p>
-                                    <p class="text-sm opacity-80">Click to flip back</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  // Topic 6: Commercial MT Systems (7 cards)
+  { id: 56, topic: 6, front: "What MT paradigm does Google Translate use?", back: "Neural Machine Translation (NMT) since 2016." },
+  { id: 57, topic: 6, front: "What is DeepL known for?", back: "High-quality NMT, especially for European language pairs." },
+  { id: 58, topic: 6, front: "What is SYSTRAN’s legacy?", back: "One of the oldest MT systems, used by the EU and US DoD." },
+  { id: 59, topic: 6, front: "What limits free MT services?", back: "Privacy risks, lack of domain customization, and no quality guarantees." },
+  { id: 60, topic: 6, front: "Can commercial MT handle PDFs?", back: "Some can, but formatting and layout often cause errors." },
+  { id: 61, topic: 6, front: "What is adaptive MT?", back: "MT that learns from user corrections in real time (e.g., ModernMT)." },
+  { id: 62, topic: 6, front: "Why avoid MT for legal texts?", back: "Risk of mistranslation with serious legal/financial consequences." },
 
-                    <!-- Card Navigation -->
-                    <div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
-                        <button onclick="prevCard()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-gray-600">
-                            <i class="fas fa-arrow-left mr-2"></i>Previous
-                        </button>
-                        
-                        <div class="flex flex-col md:flex-row gap-2">
-                            <button onclick="markAsLearned()" class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
-                                <i class="fas fa-check mr-2"></i>Mark as Learned
-                            </button>
-                            <button onclick="showDifficulty()" class="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                                <i class="fas fa-star mr-2"></i>Rate Difficulty
-                            </button>
-                        </div>
-                        
-                        <button onclick="nextCard()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-gray-600">
-                            Next<i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
+  // Topic 7: Post-Editing (7 cards)
+  { id: 63, topic: 7, front: "What is light post-editing?", back: "Minimal edits for gist comprehension (e.g., internal use)." },
+  { id: 64, topic: 7, front: "What is full post-editing?", back: "Edits to achieve publishable quality equivalent to human translation." },
+  { id: 65, topic: 7, front: "What skills does a post-editor need?", back: "Translation competence + ability to spot MT-specific errors quickly." },
+  { id: 66, topic: 7, front: "What are common MT errors?", back: "Wrong word sense, incorrect gender/number, missing words, fluency issues." },
+  { id: 67, topic: 7, front: "Is post-editing faster than translation?", back: "Often yes for repetitive/high-quality MT output, but not always." },
+  { id: 68, topic: 7, front: "What is PEMT?", back: "Post-Editing of Machine Translation—a standard workflow in LSPs." },
+  { id: 69, topic: 7, front: "What affects post-editing effort?", back: "MT quality, text type, language pair, and translator experience." },
 
-                    <!-- Difficulty Rating -->
-                    <div id="difficulty-rating" class="hidden mt-6 bg-gray-800/50 p-4 rounded-lg">
-                        <h4 class="font-bold mb-3 text-white">How difficult was this card?</h4>
-                        <div class="flex flex-col md:flex-row gap-3">
-                            <button onclick="rateDifficulty(1)" class="flex-1 py-3 bg-green-900/30 text-green-400 rounded-lg font-medium hover:bg-green-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
-                                Easy
-                            </button>
-                            <button onclick="rateDifficulty(2)" class="flex-1 py-3 bg-blue-900/30 text-blue-400 rounded-lg font-medium hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                Medium
-                            </button>
-                            <button onclick="rateDifficulty(3)" class="flex-1 py-3 bg-red-900/30 text-red-400 rounded-lg font-medium hover:bg-red-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
-                                Hard
-                            </button>
-                        </div>
-                    </div>
-                </div>
+  // Topic 8: Localization & Translation (7 cards)
+  { id: 70, topic: 8, front: "What is globalization?", back: "Designing products to support multiple locales without engineering changes." },
+  { id: 71, topic: 8, front: "What is internationalization (i18n)?", back: "Preparing software/code for localization (e.g., externalizing strings)." },
+  { id: 72, topic: 8, front: "What is L10n?", back: "Localization—the adaptation of content to a specific locale." },
+  { id: 73, topic: 8, front: "Why localize beyond translation?", back: "Adapt date formats, currencies, colors, symbols, and legal requirements." },
+  { id: 74, topic: 8, front: "What is pseudo-localization?", back: "Testing UI readiness by replacing text with accented/longer fake text." },
+  { id: 75, topic: 8, front: "What is a locale?", back: "A combination of language + region (e.g., en-US, fr-CA)." },
+  { id: 76, topic: 8, front: "What tools support localization?", back: "CAT tools, TMS, string extractors, and QA checkers like XLIFF editors." },
 
-                <!-- All Flashcards List -->
-                <div class="card p-6">
-                    <h3 class="font-bold text-lg mb-4 text-white">All Flashcards</h3>
-                    <div id="flashcards-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto p-2">
-                        <!-- Flashcards will be dynamically loaded here -->
-                    </div>
-                </div>
-            </section>
+  // Topic 9: Corpora & Translation (7 cards)
+  { id: 77, topic: 9, front: "What is a parallel corpus?", back: "Bilingual texts aligned at sentence level, used to train SMT/NMT." },
+  { id: 78, topic: 9, front: "What is a monolingual corpus?", back: "Large text collection in one language, used for language modeling." },
+  { id: 79, topic: 9, front: "What is OPUS?", back: "Open-source collection of parallel corpora from open-domain sources." },
+  { id: 80, topic: 9, front: "What is sentence alignment?", back: "The process of pairing sentences in source and target texts." },
+  { id: 81, topic: 9, front: "Why are corpora essential for SMT?", back: "Statistical MT relies on large bilingual datasets to learn translation probabilities." },
+  { id: 82, topic: 9, front: "What is a bitext?", back: "A document containing both source and target language versions of the same text." },
+  { id: 83, topic: 9, front: "What is a comparable corpus?", back: "Texts on similar topics in different languages, not direct translations." },
 
-            <!-- Quiz Section -->
-            <section id="quiz-section" class="hidden section-transition fade-in" role="region" aria-label="Quiz">
-                <div class="card p-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">Quiz Time</h2>
-                            <p class="text-gray-300">Test your knowledge with 50 questions</p>
-                        </div>
-                        <div>
-                            <button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
-                                <i class="fas fa-arrow-left mr-2"></i>Back
-                            </button>
-                        </div>
-                    </div>
+  // Topic 10: Evaluating MT (7 cards)
+  { id: 84, topic: 10, front: "What is BLEU score?", back: "Automatic MT metric comparing n-gram overlap with reference translations." },
+  { id: 85, topic: 10, front: "What is human evaluation in MT?", back: "Assessing fluency, adequacy, or error typology via expert raters." },
+  { id: 86, topic: 10, front: "What is TER?", back: "Translation Edit Rate—measures edits needed to match reference." },
+  { id: 87, topic: 10, front: "What is METEOR?", back: "MT evaluation metric that includes synonymy and stemming." },
+  { id: 88, topic: 10, front: "What is adequacy in MT evaluation?", back: "How much information is preserved from source to target." },
+  { id: 89, topic: 10, front: "What is fluency in MT evaluation?", back: "How grammatical and natural the output sounds in the target language." },
+  { id: 90, topic: 10, front: "Why combine automatic and human evaluation?", back: "Automatic metrics are fast but imperfect; human judgment captures nuance." },
 
-                    <!-- Quiz Progress -->
-                    <div class="mb-6">
-                        <div class="flex justify-between text-sm text-gray-300 mb-2">
-                            <span id="quiz-progress">Question 1/50</span>
-                            <span id="quiz-score">Score: 0</span>
-                        </div>
-                        <div class="progress-container">
-                            <div id="quiz-progress-bar" class="progress-bar" style="width: 2%"></div>
-                        </div>
-                    </div>
+  // Topic 11: Linguistics for MT (7 cards)
+  { id: 91, topic: 11, front: "What is morphology in MT?", back: "Study of word structure; critical for agglutinative/fusional languages." },
+  { id: 92, topic: 11, front: "What is parsing?", back: "Analyzing sentence structure into syntactic trees for rule-based MT." },
+  { id: 93, topic: 11, front: "What is POS tagging?", back: "Assigning parts of speech to words—essential for disambiguation." },
+  { id: 94, topic: 11, front: "What is semantic role labeling?", back: "Identifying agent, patient, etc., in a sentence for deeper meaning." },
+  { id: 95, topic: 11, front: "Why is word sense disambiguation hard?", back: "Context determines meaning, and many words have multiple senses." },
+  { id: 96, topic: 11, front: "What is dependency grammar?", back: "A syntactic model representing relationships between words." },
+  { id: 97, topic: 11, front: "What is named entity recognition?", back: "Identifying proper nouns (people, places) to preserve them in translation." },
 
-                    <!-- Quiz Question -->
-                    <div class="mb-8">
-                        <h3 id="quiz-question" class="text-xl font-bold mb-6 text-white">What was the main conclusion of the 1966 ALPAC Report?</h3>
-                        
-                        <div id="quiz-options">
-                            <!-- Options will be loaded here -->
-                        </div>
-                    </div>
+  // Topic 12: Sublanguage (7 cards)
+  { id: 98, topic: 12, front: "Give an example of sublanguage.", back: "Medical reports, weather forecasts, or patent abstracts." },
+  { id: 99, topic: 12, front: "Why is sublanguage easier for MT?", back: "Limited vocabulary, predictable syntax, and stable semantics." },
+  { id: 100, topic: 12, front: "What is controlled language?", back: "A simplified language variant with strict rules to aid MT." },
+  { id: 101, topic: 12, front: "What is ASD-STE100?", back: "A specification for Simplified Technical English used in aerospace." },
+  { id: 102, topic: 12, front: "How does sublanguage reduce ambiguity?", back: "By restricting word senses and grammatical structures." },
+  { id: 103, topic: 12, front: "What industries benefit most from sublanguage MT?", back: "Aviation, medicine, law, and technical documentation." },
+  { id: 104, topic: 12, front: "Can sublanguage systems translate general texts?", back: "No—they fail outside their narrow domain due to limited coverage." },
 
-                    <!-- Quiz Navigation -->
-                    <div class="flex flex-col md:flex-row justify-between gap-4">
-                        <button id="prev-question-btn" onclick="prevQuestion()" class="px-6 py-3 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-600" disabled>
-                            <i class="fas fa-arrow-left mr-2"></i>Previous
-                        </button>
-                        
-                        <button id="next-question-btn" onclick="nextQuestion()" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            Next Question<i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
+  // Topic 13: MT for Minority Languages (3 cards)
+  { id: 105, topic: 13, front: "Why develop MT for minority languages?", back: "Preserve culture, improve access to information, and support education." },
+  { id: 106, topic: 13, front: "What challenges exist for minority-language MT?", back: "Lack of digital resources, corpora, and standardized orthography." },
+  { id: 107, topic: 13, front: "What is low-resource MT?", back: "MT for languages with limited training data, requiring special techniques." },
 
-                    <!-- Quiz Results -->
-                    <div id="quiz-results" class="hidden mt-8 bg-gradient-to-r from-green-500 to-blue-600 p-6 rounded-xl text-white">
-                        <div class="text-center">
-                            <i class="fas fa-trophy text-4xl mb-4"></i>
-                            <h3 class="text-2xl font-bold mb-2">Quiz Complete!</h3>
-                            <p id="final-score" class="text-3xl font-bold mb-4">Score: 45/50 (90%)</p>
-                            <div class="flex flex-col md:flex-row justify-center gap-4">
-                                <button onclick="restartQuiz()" class="px-6 py-3 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
-                                    Restart Quiz
-                                </button>
-                                <button onclick="showSection('dashboard')" class="px-6 py-3 bg-white/20 text-white rounded-lg font-bold hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50">
-                                    Return to Dashboard
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  // Topic 14: MT in the Classroom (3 cards)
+  { id: 108, topic: 14, front: "How is MT used in classrooms?", back: "As a tool to teach translation strategies, not as a replacement." },
+  { id: 109, topic: 14, front: "What activities use MT in teaching?", back: "Post-editing exercises, error analysis, and comparative studies." },
+  { id: 110, topic: 14, front: "What should students learn about MT?", back: "Its strengths, weaknesses, appropriate use cases, and ethical implications." }
+];
 
-            <!-- Mind Maps Section -->
-            <section id="mindmaps-section" class="hidden section-transition fade-in" role="region" aria-label="Mind maps">
-                <div class="card p-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">Mind Maps</h2>
-                            <p class="text-gray-300">Visualize connections between concepts</p>
-                        </div>
-                        <div>
-                            <button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
-                                <i class="fas fa-arrow-left mr-2"></i>Back
-                            </button>
-                        </div>
-                    </div>
+// Trim to exactly 100 if needed
+flashcardsData = flashcardsData.slice(0, 100);
 
-                    <!-- Mind Map Selector -->
-                    <div class="mb-6">
-                        <select id="mindmap-select" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="loadMindMap()">
-                            <option value="1">1. Introduction to CAT - Complete Overview</option>
-                            <option value="2">2. Translator's Workstation - Tools & Components</option>
-                            <option value="3">3. Translation Memory Systems - Architecture</option>
-                            <option value="4">4. Terminology Management - Workflow</option>
-                            <option value="5">5. Localization Process - Complete Workflow</option>
-                            <option value="6">6. MT Evaluation Methods - Approaches & Metrics</option>
-                            <option value="7">7. CAT vs MT - Comparison Map</option>
-                            <option value="8">8. Translation Technologies Timeline</option>
-                        </select>
-                    </div>
+// === FULL QUIZ DATA (50 REAL QUESTIONS) ===
+quizData = [
+  { id: 1, topic: 1, question: "What was the main conclusion of the 1966 ALPAC Report?", options: ["MT was ready for widespread use", "MT was slower and more expensive than human translation", "MT should replace all human translators", "CAT tools were unnecessary"], correct: 1, explanation: "The ALPAC Report concluded MT was slower, less accurate, and twice as expensive." },
+  { id: 2, topic: 1, question: "Which is NOT a core CAT tool component?", options: ["Translation Memory", "Terminology Management", "Full automation", "Quality Assurance"], correct: 2, explanation: "CAT tools assist rather than fully automate translation." },
+  { id: 3, topic: 1, question: "What does FAHQT stand for?", options: ["Fully Automated High-Quality Translation", "Fast Accurate Human Quality Translation", "Fully Assisted Human Quality Translation", "Federated Automated High Quality Transfer"], correct: 0, explanation: "FAHQT = Fully Automatic High-Quality Translation." },
+  { id: 4, topic: 1, question: "What successful MT system used the sublanguage approach?", options: ["SYSTRAN", "Météo", "Logos", "Metal"], correct: 1, explanation: "The Canadian Météo system for weather reports." },
+  { id: 5, topic: 1, question: "What is the difference between MAHT and HAMT?", options: ["MAHT is faster", "MAHT keeps human in control, HAMT is machine-driven", "HAMT is more accurate", "They are the same"], correct: 1, explanation: "MAHT is human-centered; HAMT is machine-centered." },
+  { id: 6, topic: 2, question: "What is a bilingual concordance used for?", options: ["Checking grammar", "Viewing previous translations of phrases", "Aligning audio files", "Creating glossaries"], correct: 1, explanation: "It shows how terms/phrases were translated in past projects." },
+  { id: 7, topic: 3, question: "What does TMX stand for?", options: ["Translation Memory eXchange", "Text Markup XML", "Term Management Export", "Translator's Memory Index"], correct: 0, explanation: "TMX is the standard format for exchanging translation memories." },
+  { id: 8, topic: 4, question: "Which format is used for terminology exchange?", options: ["TMX", "TBX", "XLIFF", "PO"], correct: 1, explanation: "TBX (TermBase eXchange) is the ISO standard for terminology." },
+  { id: 9, topic: 5, question: "What causes ambiguity in 'Flying planes can be dangerous'?", options: ["Lexical only", "Structural only", "Both lexical and structural", "None"], correct: 2, explanation: "'Flying' can be verb or adjective; 'planes' can be aircraft or geometric objects." },
+  { id: 10, topic: 6, question: "Which system uses adaptive MT?", options: ["Google Translate", "DeepL", "ModernMT", "SYSTRAN Classic"], correct: 2, explanation: "ModernMT adapts to user corrections in real time." },
+  { id: 11, topic: 7, question: "What is light post-editing primarily used for?", options: ["Publishable documents", "Internal comprehension", "Legal contracts", "Literary works"], correct: 1, explanation: "Light PE ensures basic understandability, not publication quality." },
+  { id: 12, topic: 8, question: "What does 'i18n' stand for?", options: ["Internationalization", "Integration", "Interlingua", "Intelligent translation"], correct: 0, explanation: "i18n = i + 18 letters + n = internationalization." },
+  { id: 13, topic: 9, question: "What is a parallel corpus?", options: ["Two unrelated texts", "Source and target texts aligned sentence-by-sentence", "A dictionary", "A monolingual dataset"], correct: 1, explanation: "Essential for training statistical and neural MT systems." },
+  { id: 14, topic: 10, question: "What does BLEU measure?", options: ["Fluency only", "Adequacy only", "N-gram overlap with reference", "Human preference"], correct: 2, explanation: "BLEU compares machine output to human reference translations." },
+  { id: 15, topic: 11, question: "What is POS tagging?", options: ["Part-of-speech tagging", "Proofreading operation system", "Phrase-order strategy", "Parsing output structure"], correct: 0, explanation: "Assigns grammatical categories (noun, verb, etc.) to words." },
+  { id: 16, topic: 12, question: "Which is an example of a sublanguage?", options: ["Shakespearean English", "Weather forecasts", "Social media slang", "Poetry"], correct: 1, explanation: "Weather reports use restricted vocabulary and syntax." },
+  { id: 17, topic: 13, question: "What is a major challenge for minority-language MT?", options: ["Too much data", "Lack of parallel corpora", "Over-standardization", "Excessive funding"], correct: 1, explanation: "Low-resource languages lack training data." },
+  { id: 18, topic: 14, question: "How should MT be used in translation classrooms?", options: ["As a replacement for human translators", "To demonstrate limitations and teach post-editing", "Only for grading", "Avoided entirely"], correct: 1, explanation: "MT is a pedagogical tool for critical analysis." },
+  { id: 19, topic: 3, question: "What is a fuzzy match in TM?", options: ["Exact match", "75-99% similar segment", "Unrelated segment", "New segment"], correct: 1, explanation: "Fuzzy matches require partial editing by the translator." },
+  { id: 20, topic: 4, question: "What is ISO 12616 related to?", options: ["Translation memory", "Terminology work", "File formats", "Quality metrics"], correct: 1, explanation: "It’s the international standard for terminology in translation." },
+  { id: 21, topic: 5, question: "What is deixis?", options: ["Word formation", "Context-dependent words like 'here' or 'now'", "Sentence structure", "Translation error type"], correct: 1, explanation: "Deictic expressions require contextual knowledge." },
+  { id: 22, topic: 6, question: "Which MT system is known for high quality in European languages?", options: ["Google Translate", "Bing Translator", "DeepL", "Apertium"], correct: 2, explanation: "DeepL excels in Germanic and Romance language pairs." },
+  { id: 23, topic: 7, question: "What is PEMT?", options: ["Pre-editing machine translation", "Post-editing machine translation", "Parallel evaluation method", "Professional editing mode"], correct: 1, explanation: "PEMT is a standard industry workflow." },
+  { id: 24, topic: 8, question: "What is pseudo-localization used for?", options: ["Testing UI layout readiness", "Creating fake translations", "Training MT", "Terminology extraction"], correct: 0, explanation: "It tests if UI can handle longer/accents before real translation." },
+  { id: 25, topic: 9, question: "What is OPUS?", options: ["A commercial MT engine", "A collection of open parallel corpora", "A CAT tool", "A quality metric"], correct: 1, explanation: "OPUS provides free parallel data for research and development." },
+  { id: 26, topic: 10, question: "What does TER measure?", options: ["Time to edit", "Translation Edit Rate", "Text encoding reliability", "Term extraction ratio"], correct: 1, explanation: "TER counts edits needed to match a reference." },
+  { id: 27, topic: 11, question: "Why is morphology important in MT?", options: ["It affects word formation in many languages", "It simplifies English", "It replaces syntax", "It’s irrelevant for NMT"], correct: 0, explanation: "Languages like Finnish or Arabic have complex morphology." },
+  { id: 28, topic: 12, question: "What is Controlled Language?", options: ["Natural spoken dialect", "Simplified language with strict rules", "Machine code", "Legal jargon"], correct: 1, explanation: "Used to improve MT quality and readability." },
+  { id: 29, topic: 13, question: "What is low-resource MT?", options: ["MT for widely spoken languages", "MT with abundant data", "MT for languages with little data", "Cloud-based MT"], correct: 2, explanation: "Requires techniques like transfer learning or multilingual models." },
+  { id: 30, topic: 14, question: "What is a key learning objective when using MT in class?", options: ["Blind trust in MT output", "Understanding MT limitations", "Replacing dictionaries", "Speed over accuracy"], correct: 1, explanation: "Critical awareness is essential." },
+  { id: 31, topic: 1, question: "Who was the primary audience of the ALPAC Report?", options: ["Translators", "U.S. government", "Software developers", "Linguists"], correct: 1, explanation: "It was commissioned by the U.S. National Academy of Sciences." },
+  { id: 32, topic: 2, question: "What is dictation used for in translation?", options: ["Recording client calls", "Voice input to speed up drafting", "Machine translation", "Terminology management"], correct: 1, explanation: "Helps translators produce text faster via speech." },
+  { id: 33, topic: 3, question: "What is Levenshtein distance used for in TM?", options: ["Measuring sound similarity", "Calculating string edit distance", "Aligning audio", "Evaluating fluency"], correct: 1, explanation: "It quantifies how different two strings are." },
+  { id: 34, topic: 4, question: "What is term extraction?", options: ["Deleting obsolete terms", "Automatically identifying candidate terms", "Translating terms manually", "Creating glossaries from scratch"], correct: 1, explanation: "Often done using frequency and pattern analysis." },
+  { id: 35, topic: 5, question: "What makes idioms hard for MT?", options: ["They are short", "Literal translation misses meaning", "They use simple words", "They are rare"], correct: 1, explanation: "‘Kick the bucket’ ≠ literal action." },
+  { id: 36, topic: 6, question: "What is a risk of using free MT for business?", options: ["Too slow", "Data privacy exposure", "Too accurate", "Requires installation"], correct: 1, explanation: "Input text may be stored or used to train models." },
+  { id: 37, topic: 7, question: "What is cognitive load in post-editing?", options: ["Physical fatigue", "Mental effort to process MT output", "Keyboard strain", "Eye strain"], correct: 1, explanation: "High for poor-quality MT." },
+  { id: 38, topic: 8, question: "What is transcreation?", options: ["Literal translation", "Creative adaptation for marketing", "Machine translation", "Terminology creation"], correct: 1, explanation: "Goes beyond translation to evoke same emotion." },
+  { id: 39, topic: 9, question: "What is a noisy parallel corpus?", options: ["Audio recordings", "Non-literal or misaligned translations", "Clean dataset", "Monolingual text"], correct: 1, explanation: "Common in web-crawled data." },
+  { id: 40, topic: 10, question: "Why is human evaluation still needed?", options: ["Automatic metrics are perfect", "Humans are slower", "Metrics miss nuance and meaning", "It’s cheaper"], correct: 2, explanation: "BLEU can’t assess meaning preservation well." },
+  { id: 41, topic: 11, question: "What is parsing in MT?", options: ["Deleting sentences", "Analyzing sentence structure", "Translating word-by-word", "Generating audio"], correct: 1, explanation: "Essential for rule-based and some hybrid systems." },
+  { id: 42, topic: 12, question: "What industry uses ASD-STE100?", options: ["Healthcare", "Aerospace", "Legal", "Entertainment"], correct: 1, explanation: "Simplified Technical English for aviation manuals." },
+  { id: 43, topic: 13, question: "How can MT support language preservation?", options: ["By replacing native speakers", "By enabling digital content creation", "By discouraging use", "By translating everything to English"], correct: 1, explanation: "Helps create written content in endangered languages." },
+  { id: 44, topic: 14, question: "What skill does MT-based teaching develop?", options: ["Passive consumption", "Critical post-editing ability", "Memorization", "Typing speed"], correct: 1, explanation: "Students learn to evaluate and improve MT output." },
+  { id: 45, topic: 3, question: "What is sentence segmentation?", options: ["Splitting text into sentences", "Combining paragraphs", "Translating segments", "Aligning words"], correct: 0, explanation: "Critical preprocessing step for TM and MT." },
+  { id: 46, topic: 4, question: "What is term validation?", options: ["Deleting terms", "Checking if terms match approved termbase", "Translating terms", "Extracting terms"], correct: 1, explanation: "Ensures consistency and compliance." },
+  { id: 47, topic: 6, question: "What is zero-shot MT?", options: ["MT with no training", "Translating unseen language pairs", "MT without internet", "Rule-based MT"], correct: 1, explanation: "Enabled by multilingual NMT models." },
+  { id: 48, topic: 7, question: "What affects post-editing time most?", options: ["Font size", "MT quality", "Keyboard layout", "Screen brightness"], correct: 1, explanation: "High-quality MT = faster post-editing." },
+  { id: 49, topic: 8, question: "What is a locale code for Canadian French?", options: ["fr-FR", "fr-CA", "ca-FR", "fr-CN"], correct: 1, explanation: "Language + country/region." },
+  { id: 50, topic: 1, question: "What is the main goal of CAT tools?", options: ["Replace translators", "Increase consistency and efficiency", "Eliminate terminology", "Slow down translation"], correct: 1, explanation: "CAT enhances, not replaces, human expertise." }
+];
 
-                    <!-- Mind Map Container -->
-                    <div class="mindmap-container" id="mindmap-canvas">
-                        <!-- Mind map will be drawn here -->
-                    </div>
+// Ensure exactly 50
+quizData = quizData.slice(0, 50);
 
-                    <!-- Mind Map Description -->
-                    <div class="mt-6 bg-gray-800/50 p-4 rounded-lg">
-                        <h4 id="mindmap-title" class="font-bold text-lg mb-2 text-white">Introduction to CAT - Complete Overview</h4>
-                        <p id="mindmap-description" class="text-gray-300">
-                            This mind map shows the main components and concepts of Computer-Assisted Translation. Click on nodes to see more details about each concept.
-                        </p>
-                    </div>
-                </div>
-            </section>
+// === MIND MAPS DATA (8 COMPLETE MAPS) ===
+mindMapsData = {
+  1: {
+    title: "Introduction to CAT - Complete Overview",
+    description: "Shows main components and concepts of Computer-Assisted Translation",
+    nodes: [
+      { id: 1, label: "CAT Tools", x: 50, y: 20 },
+      { id: 2, label: "History", x: 20, y: 40 },
+      { id: 3, label: "MT vs CAT", x: 80, y: 40 },
+      { id: 4, label: "ALPAC Report", x: 10, y: 60 },
+      { id: 5, label: "Applications", x: 40, y: 60 },
+      { id: 6, label: "Future Trends", x: 70, y: 60 }
+    ],
+    connections: [[1,2], [1,3], [2,4], [1,5], [1,6]]
+  },
+  2: {
+    title: "Translator's Workstation - Tools & Components",
+    description: "Shows all components of a professional translator's workstation",
+    nodes: [
+      { id: 1, label: "Workstation", x: 50, y: 20 },
+      { id: 2, label: "Word Processing", x: 20, y: 40 },
+      { id: 3, label: "Dictation Tools", x: 50, y: 40 },
+      { id: 4, label: "Lexical Resources", x: 80, y: 40 },
+      { id: 5, label: "TM Integration", x: 30, y: 60 },
+      { id: 6, label: "QA Tools", x: 70, y: 60 }
+    ],
+    connections: [[1,2], [1,3], [1,4], [2,5], [4,6]]
+  },
+  3: {
+    title: "Translation Memory Systems - Architecture",
+    description: "Architecture and components of TM systems",
+    nodes: [
+      { id: 1, label: "TM Database", x: 50, y: 20 },
+      { id: 2, label: "Alignment", x: 20, y: 40 },
+      { id: 3, label: "Fuzzy Matching", x: 50, y: 40 },
+      { id: 4, label: "TMX Format", x: 80, y: 40 },
+      { id: 5, label: "Import/Export", x: 30, y: 60 },
+      { id: 6, label: "Quality Metrics", x: 70, y: 60 }
+    ],
+    connections: [[1,2], [1,3], [1,4], [2,5], [3,6]]
+  },
+  4: {
+    title: "Terminology Management - Workflow",
+    description: "Workflow for managing terminology in CAT tools",
+    nodes: [
+      { id: 1, label: "Terminology DB", x: 50, y: 20 },
+      { id: 2, label: "Term Extraction", x: 20, y: 40 },
+      { id: 3, label: "Validation", x: 50, y: 40 },
+      { id: 4, label: "Lookup Tools", x: 80, y: 40 },
+      { id: 5, label: "Sharing", x: 30, y: 60 },
+      { id: 6, label: "Maintenance", x: 70, y: 60 }
+    ],
+    connections: [[1,2], [1,3], [1,4], [2,5], [3,6]]
+  },
+  5: {
+    title: "Localization Process - Complete Workflow",
+    description: "End-to-end steps from internationalization to delivery",
+    nodes: [
+      { id: 1, label: "Source Prep", x: 10, y: 30 },
+      { id: 2, label: "i18n", x: 25, y: 20 },
+      { id: 3, label: "Extraction", x: 40, y: 30 },
+      { id: 4, label: "Translation", x: 55, y: 30 },
+      { id: 5, label: "Review", x: 70, y: 30 },
+      { id: 6, label: "Build", x: 85, y: 20 },
+      { id: 7, label: "QA", x: 70, y: 50 },
+      { id: 8, label: "Delivery", x: 85, y: 50 }
+    ],
+    connections: [[2,1],[1,3],[3,4],[4,5],[5,6],[6,7],[7,8]]
+  },
+  6: {
+    title: "MT Evaluation Methods - Approaches & Metrics",
+    description: "Human and automatic evaluation techniques",
+    nodes: [
+      { id: 1, label: "Evaluation", x: 50, y: 20 },
+      { id: 2, label: "Human", x: 30, y: 40 },
+      { id: 3, label: "Automatic", x: 70, y: 40 },
+      { id: 4, label: "Fluency", x: 20, y: 60 },
+      { id: 5, label: "Adequacy", x: 40, y: 60 },
+      { id: 6, label: "BLEU", x: 60, y: 60 },
+      { id: 7, label: "TER", x: 80, y: 60 }
+    ],
+    connections: [[1,2],[1,3],[2,4],[2,5],[3,6],[3,7]]
+  },
+  7: {
+    title: "CAT vs MT - Comparison Map",
+    description: "Key differences in philosophy, control, and output",
+    nodes: [
+      { id: 1, label: "CAT", x: 30, y: 30 },
+      { id: 2, label: "MT", x: 70, y: 30 },
+      { id: 3, label: "Human in control", x: 20, y: 50 },
+      { id: 4, label: "TM reuse", x: 40, y: 50 },
+      { id: 5, label: "Full automation", x: 60, y: 50 },
+      { id: 6, label: "Quality variance", x: 80, y: 50 }
+    ],
+    connections: [[1,3],[1,4],[2,5],[2,6]]
+  },
+  8: {
+    title: "Translation Technologies Timeline",
+    description: "Historical evolution from 1950s to present",
+    nodes: [
+      { id: 1, label: "1954 Georgetown", x: 10, y: 30 },
+      { id: 2, label: "1966 ALPAC", x: 25, y: 30 },
+      { id: 3, label: "1980s TM", x: 40, y: 30 },
+      { id: 4, label: "1990s SMT", x: 55, y: 30 },
+      { id: 5, label: "2016 NMT", x: 70, y: 30 },
+      { id: 6, label: "2020s LLMs", x: 85, y: 30 }
+    ],
+    connections: [[1,2],[2,3],[3,4],[4,5],[5,6]]
+  }
+};
 
-            <!-- Progress Section -->
-            <section id="progress-section" class="hidden section-transition fade-in" role="region" aria-label="Learning progress">
-                <div class="card p-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">Learning Progress</h2>
-                            <p class="text-gray-300">Track your achievements and growth</p>
-                        </div>
-                        <div>
-                            <button onclick="showSection('dashboard')" class="bg-gray-800 text-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
-                                <i class="fas fa-arrow-left mr-2"></i>Back
-                            </button>
-                        </div>
-                    </div>
+// Initialize galaxy background
+function initGalaxy() {
+  const galaxy = document.getElementById('galaxy');
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = Math.random() * 3 + 'px';
+    star.style.height = star.style.width;
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    star.style.animationDelay = Math.random() * 5 + 's';
+    galaxy.appendChild(star);
+  }
+  for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const size = Math.random() * 100 + 50;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + 100 + '%';
+    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    galaxy.appendChild(particle);
+  }
+}
 
-                    <!-- Overall Progress -->
-                    <div class="mb-8">
-                        <h3 class="font-bold text-lg mb-4 text-white">Overall Progress</h3>
-                        <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 rounded-xl">
-                            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                                <div>
-                                    <div class="text-3xl font-bold text-blue-400">28%</div>
-                                    <div class="text-gray-300">Course Completion</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg font-bold text-white">Level 2</div>
-                                    <div class="text-gray-300">Student</div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: 28%"></div>
-                            </div>
-                        </div>
-                    </div>
+// Navigation Functions
+function showSection(sectionName) {
+  document.querySelectorAll('main > section').forEach(section => {
+    section.classList.add('hidden');
+  });
+  document.getElementById(`${sectionName}-section`).classList.remove('hidden');
+  document.getElementById(`${sectionName}-section`).classList.add('fade-in');
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+    item.removeAttribute('aria-current');
+  });
+  const activeNav = document.querySelector(`.nav-item[data-section="${sectionName}"]`);
+  if (activeNav) {
+    activeNav.classList.add('active');
+    activeNav.setAttribute('aria-current', 'page');
+  }
+  currentSection = sectionName;
+  if (sectionName === 'flashcards') {
+    loadFlashcard();
+    updateFlashcardList();
+  } else if (sectionName === 'quiz') {
+    loadQuizQuestion();
+  } else if (sectionName === 'mindmaps') {
+    loadMindMap();
+  } else if (sectionName === 'progress') {
+    updateProgressSection();
+  } else if (sectionName === 'dashboard') {
+    renderTopics();
+  }
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+    mobileMenu.classList.add('hidden');
+    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+  }
+}
 
-                    <!-- Topic Progress -->
-                    <div class="mb-8">
-                        <h3 class="font-bold text-lg mb-4 text-white">Topic Progress</h3>
-                        <div id="topic-progress-list" class="space-y-4">
-                            <!-- Progress bars for each topic will be loaded here -->
-                        </div>
-                    </div>
+function setTopic(topicId) {
+  currentTopic = topicId;
+  document.getElementById('topic-select').value = topicId;
+  filterFlashcards();
+  showSection('flashcards');
+}
 
-                    <!-- Achievements -->
-                    <div>
-                        <h3 class="font-bold text-lg mb-4 text-white">Achievements</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-yellow-900/30 p-4 rounded-lg text-center border border-yellow-800/30">
-                                <i class="fas fa-graduation-cap text-yellow-400 text-2xl mb-2"></i>
-                                <div class="font-bold text-white">First Steps</div>
-                                <div class="text-sm text-gray-400">Complete Topic 1</div>
-                            </div>
-                            <div class="bg-blue-900/30 p-4 rounded-lg text-center border border-blue-800/30">
-                                <i class="fas fa-brain text-blue-400 text-2xl mb-2"></i>
-                                <div class="font-bold text-white">Quick Learner</div>
-                                <div class="text-sm text-gray-400">10 flashcards in a row</div>
-                            </div>
-                            <div class="bg-green-900/30 p-4 rounded-lg text-center border border-green-800/30">
-                                <i class="fas fa-trophy text-green-400 text-2xl mb-2"></i>
-                                <div class="font-bold text-white">Quiz Master</div>
-                                <div class="text-sm text-gray-400">Score 80%+ on quiz</div>
-                            </div>
-                            <div class="bg-purple-900/30 p-4 rounded-lg text-center border border-purple-800/30">
-                                <i class="fas fa-calendar-alt text-purple-400 text-2xl mb-2"></i>
-                                <div class="font-bold text-white">Consistent</div>
-                                <div class="text-sm text-gray-400">3 days in a row</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+// Flashcards Functions
+function loadFlashcard() {
+  const card = flashcardsData[currentCardIndex];
+  document.getElementById('card-front').textContent = card.front;
+  document.getElementById('card-back').textContent = card.back;
+  const topicNames = [
+    "1. Intro to CAT", "2. Workstation", "3. TM Systems", "4. Terminology",
+    "5. MT Difficulties", "6. Commercial MT", "7. Post-Editing", "8. Localization",
+    "9. Corpora", "10. Evaluating MT", "11. Linguistics", "12. Sublanguage",
+    "13. Minority Lang", "14. Classroom"
+  ];
+  document.getElementById('card-topic').textContent = topicNames[card.topic - 1] || `Topic ${card.topic}`;
+  updateFlashcardProgress();
+}
 
-        <!-- Footer -->
-        <footer class="bg-gray-900/80 backdrop-blur-lg py-8 mt-12 border-t border-gray-800">
-            <div class="container mx-auto px-4 text-center">
-                <p class="text-lg mb-2 text-white">CATalyst - Computer-Assisted Translation Learning Platform</p>
-                <p class="text-gray-400 mb-4">Accelerating translation technology education through interactive learning</p>
-                <p class="text-sm text-gray-500">Developed by Ms. Halim Faroug A. Elhag | Lecturer of English Language, UHB/University of Khartoum | © <span id="current-year"></span> All rights reserved</p>
-            </div>
-        </footer>
+function flipCard() {
+  const flashcard = document.getElementById('flashcard');
+  flashcard.classList.toggle('flipped');
+}
+
+function nextCard() {
+  const flashcard = document.getElementById('flashcard');
+  flashcard.classList.remove('flipped');
+  currentCardIndex = (currentCardIndex + 1) % flashcardsData.length;
+  loadFlashcard();
+}
+
+function prevCard() {
+  const flashcard = document.getElementById('flashcard');
+  flashcard.classList.remove('flipped');
+  currentCardIndex = (currentCardIndex - 1 + flashcardsData.length) % flashcardsData.length;
+  loadFlashcard();
+}
+
+function filterFlashcards() {
+  const topic = document.getElementById('topic-select').value;
+  if (topic === 'all') {
+    currentCardIndex = 0;
+  } else {
+    const topicIndex = flashcardsData.findIndex(card => card.topic == topic);
+    if (topicIndex !== -1) {
+      currentCardIndex = topicIndex;
+    }
+  }
+  loadFlashcard();
+  updateFlashcardList();
+}
+
+function updateFlashcardProgress() {
+  const progress = ((currentCardIndex + 1) / flashcardsData.length) * 100;
+  document.getElementById('progress-bar').style.width = `${progress}%`;
+  document.getElementById('card-progress').textContent = `${currentCardIndex + 1}/${flashcardsData.length}`;
+}
+
+function updateFlashcardList() {
+  const container = document.getElementById('flashcards-list');
+  const topic = document.getElementById('topic-select').value;
+  let filteredCards = flashcardsData;
+  if (topic !== 'all') {
+    filteredCards = flashcardsData.filter(card => card.topic == topic);
+  }
+  container.innerHTML = filteredCards.slice(0, 20).map(card => `
+    <div class="bg-gray-800/30 p-4 rounded-lg cursor-pointer hover:bg-gray-800/50 border border-gray-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+         onclick="goToCard(${card.id - 1})"
+         onkeydown="if(event.key === 'Enter') goToCard(${card.id - 1})"
+         tabindex="0"
+         role="button"
+         aria-label="View flashcard: ${card.front.substring(0, 50)}">
+      <div class="font-medium text-white mb-1">${card.front.substring(0, 60)}...</div>
+      <div class="text-sm text-gray-400">Topic ${card.topic}</div>
     </div>
+  `).join('');
+}
 
-    <script>
-        // Application State
-        let currentSection = 'dashboard';
-        let currentCardIndex = 0;
-        let currentQuestionIndex = 0;
-        let quizScore = 0;
-        let selectedQuizAnswer = null;
-        let currentTopic = 1;
-        let learnedCards = new Set();
-        let flashcardsData = [];
-        let quizData = [];
-        let mindMapsData = {};
+function goToCard(index) {
+  currentCardIndex = index;
+  const flashcard = document.getElementById('flashcard');
+  flashcard.classList.remove('flipped');
+  loadFlashcard();
+}
 
-        // Data for all flashcards (100 cards)
-        flashcardsData = [
-            // Topic 1: Introduction to CAT (15 cards)
-            { id: 1, topic: 1, front: "What is Computer-Assisted Translation (CAT)?", 
-              back: "Software tools that support human translators to improve efficiency, consistency, and quality through features like translation memory and terminology management." },
-            { id: 2, topic: 1, front: "What was the ALPAC Report (1966)?", 
-              back: "A report that concluded machine translation was slower, less accurate, and more expensive than human translation, leading to increased focus on CAT tools." },
-            { id: 3, topic: 1, front: "What is the difference between MT and CAT?", 
-              back: "MT aims for fully automatic translation, while CAT supports human translators who remain in control of the translation process." },
-            { id: 4, topic: 1, front: "What are the main components of CAT tools?", 
-              back: "1) Translation Memory 2) Terminology Management 3) Quality Assurance tools 4) Alignment tools 5) Project management features." },
-            { id: 5, topic: 1, front: "What is the 'sublanguage approach' in MT?", 
-              back: "Developing MT systems for restricted language domains with limited vocabulary and syntax, which improves translation quality." },
-            { id: 6, topic: 1, front: "What is Controlled Language?", 
-              back: "A simplified version of a natural language with restricted grammar and vocabulary used to improve MT quality." },
-            { id: 7, topic: 1, front: "What are the two main uses of MT?", 
-              back: "1) Assimilation: understanding foreign texts 2) Dissemination: producing translations for publication." },
-            { id: 8, topic: 1, front: "What is FAHQT?", 
-              back: "Fully Automatic High-Quality Translation - the original but unattained goal of MT research." },
-            { id: 9, topic: 1, front: "What is MAHT vs HAMT?", 
-              back: "Machine-Aided Human Translation (human-centered) vs Human-Aided Machine Translation (machine-centered)." },
-            { id: 10, topic: 1, front: "Who uses CAT tools?", 
-              back: "Professional translators, localization specialists, technical writers, translation agencies, and language service providers." },
-            { id: 11, topic: 1, front: "What is a translator workstation?", 
-              back: "An integrated computer environment providing all tools a translator needs: word processing, TM, terminology, dictionaries, and communication tools." },
-            { id: 12, topic: 1, front: "What were limitations of early MT?", 
-              back: "Primitive technology, underestimation of language complexity, lack of linguistic knowledge, and focus on word-for-word translation." },
-            { id: 13, topic: 1, front: "What is the Météo system?", 
-              back: "A successful MT system for weather reports between English and French, demonstrating the sublanguage approach." },
-            { id: 14, topic: 1, front: "What is Spoken Language Translation (SLT)?", 
-              back: "Combining speech recognition with machine translation, with real-time processing constraints." },
-            { id: 15, topic: 1, front: "What role does linguistics play in MT?", 
-              back: "Provides formal descriptions of language structure (syntax, semantics, pragmatics) that inform MT system design." },
-            
-            // Topic 2: Translator's Workstation (12 cards)
-            { id: 16, topic: 2, front: "What tools are in a translator's workstation?", 
-              back: "Multilingual word processing, spell/grammar checkers, thesauri, online dictionaries, terminology management, and communication tools." },
-            { id: 17, topic: 2, front: "What is 'post-editing the source text'?", 
-              back: "Modifying the source text to make it easier for MT systems to translate, rather than editing the MT output." },
-            { id: 18, topic: 2, front: "What are advantages of dictation tools?", 
-              back: "Faster input than typing, reduces typing errors, allows natural expression, and reduces physical strain." },
-            { id: 19, topic: 2, front: "What is a bilingual concordance?", 
-              back: "A tool showing source text segments alongside their translations to see how words/phrases have been translated." },
-            { id: 20, topic: 2, front: "What is markup language (XML) in translation?", 
-              back: "Text encoding that separates content from formatting, making structured documents easier to translate." },
-            { id: 21, topic: 2, front: "What are limitations of commercial MT for professionals?", 
-              back: "Often designed for non-experts with simplified interfaces and limited control over parameters." },
-            { id: 22, topic: 2, front: "What is interactive translation?", 
-              back: "MT system that asks users to make choices during translation (word sense disambiguation, structural decisions)." },
-            { id: 23, topic: 2, front: "What are lexical resources?", 
-              back: "Online dictionaries, term banks, thesauri, encyclopedias, and specialized reference materials." },
-            { id: 24, topic: 2, front: "What is automatic terminology lookup?", 
-              back: "Feature that automatically identifies terms in source text and suggests translations from a terminology database." },
-            { id: 25, topic: 2, front: "How is desktop publishing integrated?", 
-              back: "Translators can work in formatted documents or use tools that separate content from formatting." },
-            { id: 26, topic: 2, front: "What is a translator-friendly word processor?", 
-              back: "Word processing software with enhanced features for translators like grammar-aware search/replace." },
-            { id: 27, topic: 2, front: "What are IT components in a workstation?", 
-              back: "Email, file transfer, version control, backup systems, and project management tools." },
-            
-            // Topic 3: Translation Memory (13 cards)
-            { id: 28, topic: 3, front: "What is Translation Memory (TM)?", 
-              back: "A database storing previously translated text segments with their source texts for reuse in new translations." },
-            { id: 29, topic: 3, front: "What are three methods for building a TM database?", 
-              back: "1) Building gradually during translation 2) Importing from other systems 3) Aligning existing translations." },
-            { id: 30, topic: 3, front: "What is alignment in TM?", 
-              back: "Matching source text segments with their corresponding translations to create translation units." },
-            { id: 31, topic: 3, front: "What is a fuzzy match?", 
-              back: "When a source segment is similar but not identical to a segment in the TM (typically 75-99% similarity)." },
-            { id: 32, topic: 3, front: "What is TMX?", 
-              back: "Translation Memory eXchange - an XML standard for exchanging TM data between different CAT tools." },
-            { id: 33, topic: 3, front: "What is Levenshtein distance?", 
-              back: "A string similarity metric measuring minimum edits needed to change one string into another." },
-            { id: 34, topic: 3, front: "What are challenges in automatic alignment?", 
-              back: "Sentence boundary identification, non-parallel sentence correspondence, and reordering of segments." },
-            { id: 35, topic: 3, front: "What is typical productivity gain from TM?", 
-              back: "Average 30% time savings, varying with text repetitiveness and TM database quality." },
-            { id: 36, topic: 3, front: "How does TM differ from EBMT?", 
-              back: "TM suggests matches to human translators; EBMT automatically creates translations from examples." },
-            { id: 37, topic: 3, front: "What is portion matching?", 
-              back: "TM systems that can match and suggest translation of text fragments smaller than complete sentences." },
-            { id: 38, topic: 3, front: "What affects TM matching accuracy?", 
-              back: "Text similarity, language pair characteristics, TM database size/quality, and matching algorithm." },
-            { id: 39, topic: 3, front: "What is a noisy parallel corpus?", 
-              back: "Bilingual text collection where translations are not literal or sentence-aligned." },
-            { id: 40, topic: 3, front: "Name commercial TM systems.", 
-              back: "Trados Translator's Workbench, Atril Déjà Vu, Star Transit, IBM Translation Manager." },
-            
-            // Continue with more flashcards...
-            { id: 41, topic: 4, front: "What is terminology management?", 
-              back: "Systematic collection, description, processing, and presentation of terms, especially specialized vocabulary." },
-            { id: 42, topic: 5, front: "Why is translation difficult for computers?", 
-              back: "Because language is ambiguous, context-dependent, and involves cultural knowledge that machines lack." },
-            { id: 43, topic: 6, front: "What are commercial MT systems?", 
-              back: "MT systems developed for commercial use like Google Translate, DeepL, and SYSTRAN." },
-            { id: 44, topic: 7, front: "What is post-editing?", 
-              back: "The process of editing and correcting machine translation output to achieve publishable quality." },
-            { id: 45, topic: 8, front: "What is localization?", 
-              back: "Adapting products to the linguistic, cultural, and technical requirements of target markets." },
-            
-            // Add more cards to reach 100
-        ];
+function markAsLearned() {
+  learnedCards.add(currentCardIndex);
+  const btn = event.target.closest('button');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Learned!';
+  btn.style.backgroundColor = '#10b981';
+  setTimeout(() => {
+    btn.innerHTML = originalText;
+    btn.style.backgroundColor = '';
+  }, 1500);
+}
 
-        // Add more cards to reach 100
-        for (let i = 46; i <= 100; i++) {
-            const topic = Math.floor((i - 46) / 4) + 1;
-            flashcardsData.push({
-                id: i,
-                topic: topic > 14 ? 14 : topic,
-                front: `Flashcard ${i} for Topic ${topic}`,
-                back: `Detailed answer for flashcard ${i} covering important concepts from the textbook. This helps students understand key principles of Computer-Assisted Translation.`
-            });
-        }
+function showDifficulty() {
+  document.getElementById('difficulty-rating').classList.remove('hidden');
+}
 
-        // Quiz data (50 questions)
-        quizData = [
-            { id: 1, topic: 1, question: "What was the main conclusion of the 1966 ALPAC Report?", 
-              options: ["MT was ready for widespread use", "MT was slower and more expensive than human translation", 
-                       "MT should replace all human translators", "CAT tools were unnecessary"],
-              correct: 1, explanation: "The ALPAC Report concluded MT was slower, less accurate, and twice as expensive." },
-            
-            { id: 2, topic: 1, question: "Which is NOT a core CAT tool component?", 
-              options: ["Translation Memory", "Terminology Management", "Full automation", "Quality Assurance"],
-              correct: 2, explanation: "CAT tools assist rather than fully automate translation." },
-            
-            { id: 3, topic: 1, question: "What does FAHQT stand for?", 
-              options: ["Fully Automated High-Quality Translation", "Fast Accurate Human Quality Translation",
-                       "Fully Assisted Human Quality Translation", "Federated Automated High Quality Transfer"],
-              correct: 0, explanation: "FAHQT = Fully Automatic High-Quality Translation." },
-            
-            { id: 4, topic: 1, question: "What successful MT system used the sublanguage approach?", 
-              options: ["SYSTRAN", "Météo", "Logos", "Metal"],
-              correct: 1, explanation: "The Canadian Météo system for weather reports." },
-            
-            { id: 5, topic: 1, question: "What is the difference between MAHT and HAMT?", 
-              options: ["MAHT is faster", "MAHT keeps human in control, HAMT is machine-driven", 
-                       "HAMT is more accurate", "They are the same"],
-              correct: 1, explanation: "MAHT is human-centered; HAMT is machine-centered." },
-            
-            // Add more quiz questions
-        ];
+function rateDifficulty(level) {
+  const levels = ['Easy', 'Medium', 'Hard'];
+  const ratingDiv = document.getElementById('difficulty-rating');
+  ratingDiv.innerHTML = `
+    <div class="flex items-center justify-center p-3">
+      <i class="fas fa-star text-${level === 1 ? 'green' : level === 2 ? 'blue' : 'red'}-400 text-xl mr-2"></i>
+      <span class="text-white font-medium">Rated as: ${levels[level-1]}</span>
+    </div>
+  `;
+  setTimeout(() => {
+    document.getElementById('difficulty-rating').classList.add('hidden');
+    document.getElementById('difficulty-rating').innerHTML = `
+      <h4 class="font-bold mb-3 text-white">How difficult was this card?</h4>
+      <div class="flex flex-col md:flex-row gap-3">
+        <button onclick="rateDifficulty(1)" class="flex-1 py-3 bg-green-900/30 text-green-400 rounded-lg font-medium hover:bg-green-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
+          Easy
+        </button>
+        <button onclick="rateDifficulty(2)" class="flex-1 py-3 bg-blue-900/30 text-blue-400 rounded-lg font-medium hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Medium
+        </button>
+        <button onclick="rateDifficulty(3)" class="flex-1 py-3 bg-red-900/30 text-red-400 rounded-lg font-medium hover:bg-red-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
+          Hard
+        </button>
+      </div>
+    `;
+  }, 1500);
+}
 
-        // Add more quiz questions to reach 50
-        for (let i = 6; i <= 50; i++) {
-            const topic = Math.floor((i - 6) / 3) + 1;
-            quizData.push({
-                id: i,
-                topic: topic > 14 ? 14 : topic,
-                question: `Sample question ${i} about Topic ${topic}?`,
-                options: ["Option A", "Option B", "Option C", "Option D"],
-                correct: Math.floor(Math.random() * 4),
-                explanation: `Explanation for question ${i}: This tests understanding of key concepts.`
-            });
-        }
+// Quiz Functions
+function loadQuizQuestion() {
+  const question = quizData[currentQuestionIndex];
+  document.getElementById('quiz-question').textContent = question.question;
+  const optionsContainer = document.getElementById('quiz-options');
+  optionsContainer.innerHTML = '';
+  question.options.forEach((option, index) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-option focus:outline-none focus:ring-2 focus:ring-blue-500';
+    div.innerHTML = `
+      <div class="flex items-center">
+        <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center mr-3">
+          ${String.fromCharCode(65 + index)}
+        </div>
+        <span class="text-white">${option}</span>
+      </div>
+    `;
+    div.onclick = () => selectAnswer(index, div);
+    div.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        selectAnswer(index, div);
+      }
+    };
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('role', 'button');
+    optionsContainer.appendChild(div);
+  });
+  const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+  document.getElementById('quiz-progress-bar').style.width = `${progress}%`;
+  document.getElementById('quiz-progress').textContent = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+  document.getElementById('quiz-score').textContent = `Score: ${quizScore}`;
+  document.getElementById('prev-question-btn').disabled = currentQuestionIndex === 0;
+  document.getElementById('quiz-results').classList.add('hidden');
+  document.getElementById('next-question-btn').classList.remove('hidden');
+  document.getElementById('prev-question-btn').classList.remove('hidden');
+}
 
-        // Mind maps data
-        mindMapsData = {
-            1: {
-                title: "Introduction to CAT - Complete Overview",
-                description: "Shows main components and concepts of Computer-Assisted Translation",
-                nodes: [
-                    { id: 1, label: "CAT Tools", x: 50, y: 20 },
-                    { id: 2, label: "History", x: 20, y: 40 },
-                    { id: 3, label: "MT vs CAT", x: 80, y: 40 },
-                    { id: 4, label: "ALPAC Report", x: 10, y: 60 },
-                    { id: 5, label: "Applications", x: 40, y: 60 },
-                    { id: 6, label: "Future Trends", x: 70, y: 60 }
-                ],
-                connections: [[1,2], [1,3], [2,4], [1,5], [1,6]]
-            },
-            2: {
-                title: "Translator's Workstation - Tools & Components",
-                description: "Shows all components of a professional translator's workstation",
-                nodes: [
-                    { id: 1, label: "Workstation", x: 50, y: 20 },
-                    { id: 2, label: "Word Processing", x: 20, y: 40 },
-                    { id: 3, label: "Dictation Tools", x: 50, y: 40 },
-                    { id: 4, label: "Lexical Resources", x: 80, y: 40 },
-                    { id: 5, label: "TM Integration", x: 30, y: 60 },
-                    { id: 6, label: "QA Tools", x: 70, y: 60 }
-                ],
-                connections: [[1,2], [1,3], [1,4], [2,5], [4,6]]
-            },
-            // Add more mind maps...
-            3: {
-                title: "Translation Memory Systems - Architecture",
-                description: "Architecture and components of TM systems",
-                nodes: [
-                    { id: 1, label: "TM Database", x: 50, y: 20 },
-                    { id: 2, label: "Alignment", x: 20, y: 40 },
-                    { id: 3, label: "Fuzzy Matching", x: 50, y: 40 },
-                    { id: 4, label: "TMX Format", x: 80, y: 40 },
-                    { id: 5, label: "Import/Export", x: 30, y: 60 },
-                    { id: 6, label: "Quality Metrics", x: 70, y: 60 }
-                ],
-                connections: [[1,2], [1,3], [1,4], [2,5], [3,6]]
-            },
-            4: {
-                title: "Terminology Management - Workflow",
-                description: "Workflow for managing terminology in CAT tools",
-                nodes: [
-                    { id: 1, label: "Terminology DB", x: 50, y: 20 },
-                    { id: 2, label: "Term Extraction", x: 20, y: 40 },
-                    { id: 3, label: "Validation", x: 50, y: 40 },
-                    { id: 4, label: "Lookup Tools", x: 80, y: 40 },
-                    { id: 5, label: "Sharing", x: 30, y: 60 },
-                    { id: 6, label: "Maintenance", x: 70, y: 60 }
-                ],
-                connections: [[1,2], [1,3], [1,4], [2,5], [3,6]]
-            }
-        };
+function selectAnswer(index, element) {
+  selectedQuizAnswer = index;
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  element.classList.add('selected');
+}
 
-        // Initialize galaxy background
-        function initGalaxy() {
-            const galaxy = document.getElementById('galaxy');
-            
-            // Create stars
-            for (let i = 0; i < 150; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = Math.random() * 3 + 'px';
-                star.style.height = star.style.width;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                star.style.animationDelay = Math.random() * 5 + 's';
-                galaxy.appendChild(star);
-            }
-            
-            // Create particles
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 100 + 50;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + 100 + '%';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                galaxy.appendChild(particle);
-            }
-        }
+function nextQuestion() {
+  if (selectedQuizAnswer !== null) {
+    const question = quizData[currentQuestionIndex];
+    const options = document.querySelectorAll('.quiz-option');
+    options.forEach((opt, idx) => {
+      if (idx === question.correct) {
+        opt.classList.add('correct');
+      } else if (idx === selectedQuizAnswer && idx !== question.correct) {
+        opt.classList.add('incorrect');
+      }
+    });
+    if (selectedQuizAnswer === question.correct) {
+      quizScore++;
+    }
+    setTimeout(() => {
+      currentQuestionIndex++;
+      selectedQuizAnswer = null;
+      if (currentQuestionIndex < quizData.length) {
+        loadQuizQuestion();
+      } else {
+        showQuizResults();
+      }
+    }, 1500);
+  } else {
+    alert('Please select an answer before proceeding.');
+  }
+}
 
-        // Navigation Functions
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('main > section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            // Show selected section
-            document.getElementById(`${sectionName}-section`).classList.remove('hidden');
-            document.getElementById(`${sectionName}-section`).classList.add('fade-in');
-            
-            // Update navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                item.removeAttribute('aria-current');
-            });
-            
-            // Find and activate the clicked nav item
-            const activeNav = document.querySelector(`.nav-item[data-section="${sectionName}"]`);
-            if (activeNav) {
-                activeNav.classList.add('active');
-                activeNav.setAttribute('aria-current', 'page');
-            }
-            
-            currentSection = sectionName;
-            
-            // Initialize section if needed
-            if (sectionName === 'flashcards') {
-                loadFlashcard();
-                updateFlashcardList();
-            } else if (sectionName === 'quiz') {
-                loadQuizQuestion();
-            } else if (sectionName === 'mindmaps') {
-                loadMindMap();
-            } else if (sectionName === 'progress') {
-                updateProgressSection();
-            } else if (sectionName === 'dashboard') {
-                renderTopics();
-            }
-            
-            // Close mobile menu if open
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            }
-        }
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    selectedQuizAnswer = null;
+    loadQuizQuestion();
+  }
+}
 
-        function setTopic(topicId) {
-            currentTopic = topicId;
-            document.getElementById('topic-select').value = topicId;
-            filterFlashcards();
-            showSection('flashcards');
-        }
+function showQuizResults() {
+  document.getElementById('quiz-results').classList.remove('hidden');
+  document.getElementById('next-question-btn').classList.add('hidden');
+  document.getElementById('prev-question-btn').classList.add('hidden');
+  const percentage = (quizScore / quizData.length) * 100;
+  document.getElementById('final-score').textContent = `Score: ${quizScore}/${quizData.length} (${percentage.toFixed(0)}%)`;
+  let achievement = '';
+  if (percentage >= 90) achievement = '🎖️ Quiz Master!';
+  else if (percentage >= 70) achievement = '🥈 Great Job!';
+  else if (percentage >= 50) achievement = '🥉 Good Effort!';
+  else achievement = '📚 Keep Learning!';
+  document.getElementById('final-score').innerHTML += `<br><span class="text-lg mt-2 block">${achievement}</span>`;
+}
 
-        // Flashcards Functions
-        function loadFlashcard() {
-            const card = flashcardsData[currentCardIndex];
-            document.getElementById('card-front').textContent = card.front;
-            document.getElementById('card-back').textContent = card.back;
-            
-            // Update topic display
-            const topicNames = [
-                "1. Intro to CAT", "2. Workstation", "3. TM Systems", "4. Terminology",
-                "5. MT Difficulties", "6. Commercial MT", "7. Post-Editing", "8. Localization",
-                "9. Corpora", "10. Evaluating MT", "11. Linguistics", "12. Sublanguage",
-                "13. Minority Lang", "14. Classroom"
-            ];
-            document.getElementById('card-topic').textContent = topicNames[card.topic - 1] || `Topic ${card.topic}`;
-            
-            // Update progress
-            updateFlashcardProgress();
-        }
+function restartQuiz() {
+  currentQuestionIndex = 0;
+  quizScore = 0;
+  selectedQuizAnswer = null;
+  document.getElementById('quiz-results').classList.add('hidden');
+  document.getElementById('next-question-btn').classList.remove('hidden');
+  document.getElementById('prev-question-btn').classList.remove('hidden');
+  loadQuizQuestion();
+}
 
-        function flipCard() {
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.toggle('flipped');
-        }
+// Mind Maps Functions
+function loadMindMap() {
+  const mapId = document.getElementById('mindmap-select').value;
+  const map = mindMapsData[mapId];
+  if (!map) return;
+  document.getElementById('mindmap-title').textContent = map.title;
+  document.getElementById('mindmap-description').textContent = map.description;
+  const container = document.getElementById('mindmap-canvas');
+  container.innerHTML = '';
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "100%");
+  svg.setAttribute("height", "100%");
+  svg.style.position = "absolute";
+  svg.style.top = "0";
+  svg.style.left = "0";
+  svg.style.zIndex = "1";
+  map.connections.forEach(([fromId, toId]) => {
+    const from = map.nodes.find(n => n.id === fromId);
+    const to = map.nodes.find(n => n.id === toId);
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", `${from.x}%`);
+    line.setAttribute("y1", `${from.y}%`);
+    line.setAttribute("x2", `${to.x}%`);
+    line.setAttribute("y2", `${to.y}%`);
+    line.setAttribute("stroke", "#667eea");
+    line.setAttribute("stroke-width", "2");
+    line.setAttribute("stroke-dasharray", "5,5");
+    svg.appendChild(line);
+  });
+  container.appendChild(svg);
+  map.nodes.forEach(node => {
+    const nodeEl = document.createElement('div');
+    nodeEl.className = 'mindmap-node focus:outline-none focus:ring-2 focus:ring-blue-500';
+    nodeEl.textContent = node.label;
+    nodeEl.style.left = `calc(${node.x}% - 75px)`;
+    nodeEl.style.top = `calc(${node.y}% - 25px)`;
+    nodeEl.onclick = () => showNodeDetails(node.label);
+    nodeEl.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        showNodeDetails(node.label);
+      }
+    };
+    nodeEl.setAttribute('tabindex', '0');
+    nodeEl.setAttribute('role', 'button');
+    nodeEl.setAttribute('aria-label', `Mind map node: ${node.label}`);
+    container.appendChild(nodeEl);
+  });
+}
 
-        function nextCard() {
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.remove('flipped');
-            
-            currentCardIndex = (currentCardIndex + 1) % flashcardsData.length;
-            loadFlashcard();
-        }
+function showNodeDetails(label) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4';
+  modal.innerHTML = `
+    <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-white">${label}</h3>
+        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1">&times;</button>
+      </div>
+      <p class="text-gray-300 mb-6">
+        This node represents an important concept in the mind map.
+        ${label.includes('CAT') ? 'Computer-Assisted Translation involves various tools and methodologies to support human translators.' :
+          label.includes('TM') ? 'Translation Memory systems store and reuse previous translations to improve consistency and efficiency.' :
+          label.includes('MT') ? 'Machine Translation ranges from rule-based to neural approaches, each with strengths and limitations.' :
+          'This is a key component in the learning material.'}
+      </p>
+      <div class="flex justify-end">
+        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(() => {
+    modal.querySelector('button').focus();
+  }, 10);
+}
 
-        function prevCard() {
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.remove('flipped');
-            
-            currentCardIndex = (currentCardIndex - 1 + flashcardsData.length) % flashcardsData.length;
-            loadFlashcard();
-        }
+// Progress Section Functions
+function updateProgressSection() {
+  const container = document.getElementById('topic-progress-list');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 1; i <= 14; i++) {
+    const topicCards = flashcardsData.filter(card => card.topic === i);
+    const learnedTopicCards = Array.from(learnedCards).filter(index =>
+      flashcardsData[index] && flashcardsData[index].topic === i
+    ).length;
+    const progress = topicCards.length > 0 ? (learnedTopicCards / topicCards.length) * 100 : 0;
+    const div = document.createElement('div');
+    div.className = 'bg-gray-800/30 p-4 rounded-lg';
+    div.innerHTML = `
+      <div class="flex justify-between mb-2">
+        <span class="font-medium text-white">Topic ${i}: ${getTopicName(i)}</span>
+        <span class="text-gray-300">${Math.round(progress)}%</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" style="width: ${progress}%"></div>
+      </div>
+      <div class="text-xs text-gray-400 mt-2">
+        ${learnedTopicCards} of ${topicCards.length} flashcards learned
+      </div>
+    `;
+    container.appendChild(div);
+  }
+  const totalLearned = learnedCards.size;
+  const overallProgress = (totalLearned / flashcardsData.length) * 100;
+  document.querySelector('#progress-section .text-3xl.font-bold.text-blue-400').textContent =
+    `${Math.round(overallProgress)}%`;
+  document.querySelector('#progress-section .progress-bar').style.width = `${overallProgress}%`;
+}
 
-        function filterFlashcards() {
-            const topic = document.getElementById('topic-select').value;
-            if (topic === 'all') {
-                currentCardIndex = 0;
-            } else {
-                // Find first card of selected topic
-                const topicIndex = flashcardsData.findIndex(card => card.topic == topic);
-                if (topicIndex !== -1) {
-                    currentCardIndex = topicIndex;
-                }
-            }
-            loadFlashcard();
-            updateFlashcardList();
-        }
+function getTopicName(topicId) {
+  const names = [
+    "Introduction to CAT", "Translator's Workstation", "Translation Memory",
+    "Terminology Tools", "Why Translation is Difficult", "Commercial MT Systems",
+    "Post-Editing", "Localization & Translation", "Corpora & Translation",
+    "Evaluating MT", "Linguistics for MT", "Sublanguage",
+    "MT for Minority Languages", "MT in the Classroom"
+  ];
+  return names[topicId - 1] || `Topic ${topicId}`;
+}
 
-        function updateFlashcardProgress() {
-            const progress = ((currentCardIndex + 1) / flashcardsData.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-            document.getElementById('card-progress').textContent = `${currentCardIndex + 1}/${flashcardsData.length}`;
-        }
+function renderTopics() {
+  const container = document.querySelector('[aria-label="Course topics"]');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 1; i <= 14; i++) {
+    const topicCards = flashcardsData.filter(card => card.topic === i);
+    const learnedTopicCards = Array.from(learnedCards).filter(index =>
+      flashcardsData[index] && flashcardsData[index].topic === i
+    ).length;
+    const progress = topicCards.length > 0 ? (learnedTopicCards / topicCards.length) * 100 : 0;
+    const icon = getTopicIcon(i);
+    const description = getTopicDescription(i);
+    const topicEl = document.createElement('div');
+    topicEl.className = 'card p-5 cursor-pointer hover:scale-[1.02] transition-transform focus:outline-none focus:ring-2 focus:ring-blue-500';
+    topicEl.tabIndex = 0;
+    topicEl.innerHTML = `
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-900/30 to-purple-900/30 flex items-center justify-center mr-3">
+          <i class="fas fa-${icon} text-blue-400 text-lg"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-white">${i}. ${getTopicName(i)}</h3>
+          <p class="text-sm text-gray-400">${description}</p>
+        </div>
+      </div>
+      <div class="progress-container mb-2">
+        <div class="progress-bar" style="width: ${progress}%"></div>
+      </div>
+      <p class="text-xs text-gray-400">
+        ${topicCards.length} flashcards • ${Math.floor(topicCards.length / 3)} quizzes
+      </p>
+    `;
+    topicEl.onclick = () => setTopic(i);
+    topicEl.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        setTopic(i);
+      }
+    };
+    container.appendChild(topicEl);
+  }
+}
 
-        function updateFlashcardList() {
-            const container = document.getElementById('flashcards-list');
-            const topic = document.getElementById('topic-select').value;
-            
-            let filteredCards = flashcardsData;
-            if (topic !== 'all') {
-                filteredCards = flashcardsData.filter(card => card.topic == topic);
-            }
-            
-            container.innerHTML = filteredCards.slice(0, 20).map(card => `
-                <div class="bg-gray-800/30 p-4 rounded-lg cursor-pointer hover:bg-gray-800/50 border border-gray-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     onclick="goToCard(${card.id - 1})"
-                     onkeydown="if(event.key === 'Enter') goToCard(${card.id - 1})"
-                     tabindex="0"
-                     role="button"
-                     aria-label="View flashcard: ${card.front.substring(0, 50)}">
-                    <div class="font-medium text-white mb-1">${card.front.substring(0, 60)}...</div>
-                    <div class="text-sm text-gray-400">Topic ${card.topic}</div>
-                </div>
-            `).join('');
-        }
+function getTopicIcon(topicId) {
+  const icons = [
+    'play', 'desktop', 'database', 'book', 'question-circle',
+    'robot', 'edit', 'globe', 'book-open', 'star',
+    'language', 'filter', 'users', 'chalkboard-teacher'
+  ];
+  return icons[topicId - 1] || 'book';
+}
 
-        function goToCard(index) {
-            currentCardIndex = index;
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.remove('flipped');
-            loadFlashcard();
-        }
+function getTopicDescription(topicId) {
+  const descriptions = [
+    'Basics and history', 'Tools and setup', 'TM systems and uses', 'For translators',
+    'Challenges in MT', 'Google, DeepL, SYSTRAN', 'Editing MT output', 'Adapting products',
+    'Text collections', 'Methods and metrics', 'Structural analysis', 'Restricted domains',
+    'Language preservation', 'Teaching applications'
+  ];
+  return descriptions[topicId - 1] || 'Key concepts and applications';
+}
 
-        function markAsLearned() {
-            learnedCards.add(currentCardIndex);
-            
-            // Visual feedback
-            const btn = event.target.closest('button');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Learned!';
-            btn.style.backgroundColor = '#10b981';
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.backgroundColor = '';
-            }, 1500);
-        }
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+  initGalaxy();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const section = this.getAttribute('data-section');
+      showSection(section);
+    });
+  });
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+  const flashcard = document.getElementById('flashcard');
+  if (flashcard) {
+    flashcard.addEventListener('click', flipCard);
+  }
+  loadMindMap();
+  updateFlashcardList();
+  renderTopics();
+  loadQuizQuestion();
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modal = document.querySelector('.fixed.inset-0');
+      if (modal) {
+        modal.remove();
+      }
+    }
+    if (currentSection === 'flashcards' && e.target === flashcard && (e.key === ' ' || e.key === 'Enter')) {
+      e.preventDefault();
+      flipCard();
+    }
+  });
+});
 
-        function showDifficulty() {
-            document.getElementById('difficulty-rating').classList.remove('hidden');
-        }
-
-        function rateDifficulty(level) {
-            const levels = ['Easy', 'Medium', 'Hard'];
-            const colors = ['#10b981', '#3b82f6', '#ef4444'];
-            
-            // Visual feedback
-            const ratingDiv = document.getElementById('difficulty-rating');
-            ratingDiv.innerHTML = `
-                <div class="flex items-center justify-center p-3">
-                    <i class="fas fa-star text-${level === 1 ? 'green' : level === 2 ? 'blue' : 'red'}-400 text-xl mr-2"></i>
-                    <span class="text-white font-medium">Rated as: ${levels[level-1]}</span>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                document.getElementById('difficulty-rating').classList.add('hidden');
-                document.getElementById('difficulty-rating').innerHTML = `
-                    <h4 class="font-bold mb-3 text-white">How difficult was this card?</h4>
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <button onclick="rateDifficulty(1)" class="flex-1 py-3 bg-green-900/30 text-green-400 rounded-lg font-medium hover:bg-green-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
-                            Easy
-                        </button>
-                        <button onclick="rateDifficulty(2)" class="flex-1 py-3 bg-blue-900/30 text-blue-400 rounded-lg font-medium hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            Medium
-                        </button>
-                        <button onclick="rateDifficulty(3)" class="flex-1 py-3 bg-red-900/30 text-red-400 rounded-lg font-medium hover:bg-red-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
-                            Hard
-                        </button>
-                    </div>
-                `;
-            }, 1500);
-        }
-
-        // Quiz Functions
-        function loadQuizQuestion() {
-            const question = quizData[currentQuestionIndex];
-            document.getElementById('quiz-question').textContent = question.question;
-            
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const div = document.createElement('div');
-                div.className = 'quiz-option focus:outline-none focus:ring-2 focus:ring-blue-500';
-                div.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center mr-3">
-                            ${String.fromCharCode(65 + index)}
-                        </div>
-                        <span class="text-white">${option}</span>
-                    </div>
-                `;
-                div.onclick = () => selectAnswer(index, div);
-                div.onkeydown = (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        selectAnswer(index, div);
-                    }
-                };
-                div.setAttribute('tabindex', '0');
-                div.setAttribute('role', 'button');
-                optionsContainer.appendChild(div);
-            });
-            
-            // Update progress
-            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
-            document.getElementById('quiz-progress-bar').style.width = `${progress}%`;
-            document.getElementById('quiz-progress').textContent = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
-            document.getElementById('quiz-score').textContent = `Score: ${quizScore}`;
-            
-            // Update buttons
-            document.getElementById('prev-question-btn').disabled = currentQuestionIndex === 0;
-            
-            // Hide results if showing
-            document.getElementById('quiz-results').classList.add('hidden');
-            document.getElementById('next-question-btn').classList.remove('hidden');
-            document.getElementById('prev-question-btn').classList.remove('hidden');
-        }
-
-        function selectAnswer(index, element) {
-            selectedQuizAnswer = index;
-            
-            // Remove previous selections
-            document.querySelectorAll('.quiz-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            // Add selection to clicked option
-            element.classList.add('selected');
-        }
-
-        function nextQuestion() {
-            if (selectedQuizAnswer !== null) {
-                // Check answer
-                const question = quizData[currentQuestionIndex];
-                const options = document.querySelectorAll('.quiz-option');
-                
-                // Show correct/incorrect
-                options.forEach((opt, idx) => {
-                    if (idx === question.correct) {
-                        opt.classList.add('correct');
-                    } else if (idx === selectedQuizAnswer && idx !== question.correct) {
-                        opt.classList.add('incorrect');
-                    }
-                });
-                
-                // Update score
-                if (selectedQuizAnswer === question.correct) {
-                    quizScore++;
-                }
-                
-                // Move to next question after delay
-                setTimeout(() => {
-                    currentQuestionIndex++;
-                    selectedQuizAnswer = null;
-                    
-                    if (currentQuestionIndex < quizData.length) {
-                        loadQuizQuestion();
-                    } else {
-                        showQuizResults();
-                    }
-                }, 1500);
-            } else {
-                alert('Please select an answer before proceeding.');
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                selectedQuizAnswer = null;
-                loadQuizQuestion();
-            }
-        }
-
-        function showQuizResults() {
-            document.getElementById('quiz-results').classList.remove('hidden');
-            document.getElementById('next-question-btn').classList.add('hidden');
-            document.getElementById('prev-question-btn').classList.add('hidden');
-            
-            const percentage = (quizScore / quizData.length) * 100;
-            document.getElementById('final-score').textContent = `Score: ${quizScore}/${quizData.length} (${percentage.toFixed(0)}%)`;
-            
-            // Set achievement based on score
-            let achievement = '';
-            if (percentage >= 90) achievement = '🎖️ Quiz Master!';
-            else if (percentage >= 70) achievement = '🥈 Great Job!';
-            else if (percentage >= 50) achievement = '🥉 Good Effort!';
-            else achievement = '📚 Keep Learning!';
-            
-            document.getElementById('final-score').innerHTML += `<br><span class="text-lg mt-2 block">${achievement}</span>`;
-        }
-
-        function restartQuiz() {
-            currentQuestionIndex = 0;
-            quizScore = 0;
-            selectedQuizAnswer = null;
-            document.getElementById('quiz-results').classList.add('hidden');
-            document.getElementById('next-question-btn').classList.remove('hidden');
-            document.getElementById('prev-question-btn').classList.remove('hidden');
-            loadQuizQuestion();
-        }
-
-        // Mind Maps Functions
-        function loadMindMap() {
-            const mapId = document.getElementById('mindmap-select').value;
-            const map = mindMapsData[mapId];
-            
-            if (!map) return;
-            
-            document.getElementById('mindmap-title').textContent = map.title;
-            document.getElementById('mindmap-description').textContent = map.description;
-            
-            const container = document.getElementById('mindmap-canvas');
-            container.innerHTML = '';
-            
-            // Draw connections
-            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("width", "100%");
-            svg.setAttribute("height", "100%");
-            svg.style.position = "absolute";
-            svg.style.top = "0";
-            svg.style.left = "0";
-            svg.style.zIndex = "1";
-            
-            map.connections.forEach(([fromId, toId]) => {
-                const from = map.nodes.find(n => n.id === fromId);
-                const to = map.nodes.find(n => n.id === toId);
-                
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", `${from.x}%`);
-                line.setAttribute("y1", `${from.y}%`);
-                line.setAttribute("x2", `${to.x}%`);
-                line.setAttribute("y2", `${to.y}%`);
-                line.setAttribute("stroke", "#667eea");
-                line.setAttribute("stroke-width", "2");
-                line.setAttribute("stroke-dasharray", "5,5");
-                
-                svg.appendChild(line);
-            });
-            
-            container.appendChild(svg);
-            
-            // Draw nodes
-            map.nodes.forEach(node => {
-                const nodeEl = document.createElement('div');
-                nodeEl.className = 'mindmap-node focus:outline-none focus:ring-2 focus:ring-blue-500';
-                nodeEl.textContent = node.label;
-                nodeEl.style.left = `calc(${node.x}% - 75px)`;
-                nodeEl.style.top = `calc(${node.y}% - 25px)`;
-                nodeEl.onclick = () => showNodeDetails(node.label);
-                nodeEl.onkeydown = (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        showNodeDetails(node.label);
-                    }
-                };
-                nodeEl.setAttribute('tabindex', '0');
-                nodeEl.setAttribute('role', 'button');
-                nodeEl.setAttribute('aria-label', `Mind map node: ${node.label}`);
-                
-                container.appendChild(nodeEl);
-            });
-        }
-
-        function showNodeDetails(label) {
-            // Create a modal-like popup
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-white">${label}</h3>
-                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1">
-                            &times;
-                        </button>
-                    </div>
-                    <p class="text-gray-300 mb-6">
-                        This node represents an important concept in the mind map. 
-                        ${label.includes('CAT') ? 'Computer-Assisted Translation involves various tools and methodologies to support human translators.' : 
-                          label.includes('TM') ? 'Translation Memory systems store and reuse previous translations to improve consistency and efficiency.' :
-                          'This is a key component in the learning material.'}
-                    </p>
-                    <div class="flex justify-end">
-                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            // Focus on close button
-            setTimeout(() => {
-                modal.querySelector('button').focus();
-            }, 10);
-        }
-
-        // Progress Section Functions
-        function updateProgressSection() {
-            const container = document.getElementById('topic-progress-list');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            // Calculate progress for each topic
-            for (let i = 1; i <= 14; i++) {
-                const topicCards = flashcardsData.filter(card => card.topic === i);
-                const learnedTopicCards = Array.from(learnedCards).filter(index => 
-                    flashcardsData[index] && flashcardsData[index].topic === i
-                ).length;
-                
-                const progress = topicCards.length > 0 ? (learnedTopicCards / topicCards.length) * 100 : 0;
-                
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800/30 p-4 rounded-lg';
-                div.innerHTML = `
-                    <div class="flex justify-between mb-2">
-                        <span class="font-medium text-white">Topic ${i}: ${getTopicName(i)}</span>
-                        <span class="text-gray-300">${Math.round(progress)}%</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${progress}%"></div>
-                    </div>
-                    <div class="text-xs text-gray-400 mt-2">
-                        ${learnedTopicCards} of ${topicCards.length} flashcards learned
-                    </div>
-                `;
-                container.appendChild(div);
-            }
-            
-            // Update overall progress
-            const totalLearned = learnedCards.size;
-            const overallProgress = (totalLearned / flashcardsData.length) * 100;
-            document.querySelector('#progress-section .text-3xl.font-bold.text-blue-400').textContent = 
-                `${Math.round(overallProgress)}%`;
-            document.querySelector('#progress-section .progress-bar').style.width = `${overallProgress}%`;
-        }
-
-        function getTopicName(topicId) {
-            const names = [
-                "Introduction to CAT", "Translator's Workstation", "Translation Memory", 
-                "Terminology Tools", "Why Translation is Difficult", "Commercial MT Systems",
-                "Post-Editing", "Localization & Translation", "Corpora & Translation",
-                "Evaluating MT", "Linguistics for MT", "Sublanguage",
-                "MT for Minority Languages", "MT in the Classroom"
-            ];
-            return names[topicId - 1] || `Topic ${topicId}`;
-        }
-
-        // Render topics for dashboard
-        function renderTopics() {
-            const container = document.querySelector('[aria-label="Course topics"]');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            for (let i = 1; i <= 14; i++) {
-                const topicCards = flashcardsData.filter(card => card.topic === i);
-                const learnedTopicCards = Array.from(learnedCards).filter(index => 
-                    flashcardsData[index] && flashcardsData[index].topic === i
-                ).length;
-                
-                const progress = topicCards.length > 0 ? (learnedTopicCards / topicCards.length) * 100 : 0;
-                const icon = getTopicIcon(i);
-                const description = getTopicDescription(i);
-                
-                const topicEl = document.createElement('div');
-                topicEl.className = 'card p-5 cursor-pointer hover:scale-[1.02] transition-transform focus:outline-none focus:ring-2 focus:ring-blue-500';
-                topicEl.tabIndex = 0;
-                topicEl.innerHTML = `
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-900/30 to-purple-900/30 flex items-center justify-center mr-3">
-                            <i class="fas fa-${icon} text-blue-400 text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white">${i}. ${getTopicName(i)}</h3>
-                            <p class="text-sm text-gray-400">${description}</p>
-                        </div>
-                    </div>
-                    <div class="progress-container mb-2">
-                        <div class="progress-bar" style="width: ${progress}%"></div>
-                    </div>
-                    <p class="text-xs text-gray-400">
-                        ${topicCards.length} flashcards • ${Math.floor(topicCards.length / 3)} quizzes
-                    </p>
-                `;
-                
-                topicEl.onclick = () => setTopic(i);
-                topicEl.onkeydown = (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        setTopic(i);
-                    }
-                };
-                
-                container.appendChild(topicEl);
-            }
-        }
-
-        function getTopicIcon(topicId) {
-            const icons = [
-                'play', 'desktop', 'database', 'book', 'question-circle',
-                'robot', 'edit', 'globe', 'book-open', 'star',
-                'language', 'filter', 'users', 'chalkboard-teacher'
-            ];
-            return icons[topicId - 1] || 'book';
-        }
-
-        function getTopicDescription(topicId) {
-            const descriptions = [
-                'Basics and history', 'Tools and setup', 'TM systems and uses', 'For translators',
-                'Challenges in MT', 'Google, DeepL, SYSTRAN', 'Editing MT output', 'Adapting products',
-                'Text collections', 'Methods and metrics', 'Structural analysis', 'Restricted domains',
-                'Language preservation', 'Teaching applications'
-            ];
-            return descriptions[topicId - 1] || 'Key concepts and applications';
-        }
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current year in footer
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            
-            // Initialize galaxy background
-            initGalaxy();
-            
-            // Set up navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const section = this.getAttribute('data-section');
-                    showSection(section);
-                });
-            });
-            
-            // Set up mobile menu
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            if (mobileMenuBtn && mobileMenu) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                    this.setAttribute('aria-expanded', !isExpanded);
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-            
-            // Set up flashcard click
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard) {
-                flashcard.addEventListener('click', flipCard);
-            }
-            
-            // Initialize first mind map
-            loadMindMap();
-            
-            // Load initial flashcards list
-            updateFlashcardList();
-            
-            // Render topics on dashboard
-            renderTopics();
-            
-            // Load initial quiz question
-            loadQuizQuestion();
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Escape key closes modals
-                if (e.key === 'Escape') {
-                    const modal = document.querySelector('.fixed.inset-0');
-                    if (modal) {
-                        modal.remove();
-                    }
-                }
-                
-                // Space/Enter to flip flashcard when focused
-                if (currentSection === 'flashcards' && e.target === flashcard && (e.key === ' ' || e.key === 'Enter')) {
-                    e.preventDefault();
-                    flipCard();
-                }
-            });
-        });
-
-        // Make functions globally available
-        window.showSection = showSection;
-        window.setTopic = setTopic;
-        window.flipCard = flipCard;
-        window.nextCard = nextCard;
-        window.prevCard = prevCard;
-        window.filterFlashcards = filterFlashcards;
-        window.goToCard = goToCard;
-        window.markAsLearned = markAsLearned;
-        window.showDifficulty = showDifficulty;
-        window.rateDifficulty = rateDifficulty;
-        window.selectAnswer = selectAnswer;
-        window.nextQuestion = nextQuestion;
-        window.prevQuestion = prevQuestion;
-        window.restartQuiz = restartQuiz;
-        window.loadMindMap = loadMindMap;
-        window.showNodeDetails = showNodeDetails;
-    </script>
+// Make functions globally available
+window.showSection = showSection;
+window.setTopic = setTopic;
+window.flipCard = flipCard;
+window.nextCard = nextCard;
+window.prevCard = prevCard;
+window.filterFlashcards = filterFlashcards;
+window.goToCard = goToCard;
+window.markAsLearned = markAsLearned;
+window.showDifficulty = showDifficulty;
+window.rateDifficulty = rateDifficulty;
+window.selectAnswer = selectAnswer;
+window.nextQuestion = nextQuestion;
+window.prevQuestion = prevQuestion;
+window.restartQuiz = restartQuiz;
+window.loadMindMap = loadMindMap;
+window.showNodeDetails = showNodeDetails;
+</script>
 </body>
 </html>
